@@ -1,47 +1,34 @@
 /**
- * Logging utility using Winston - Production optimized
+ * Simple production-safe logger
  */
 
-import winston from 'winston';
-
-const logLevel = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
-
-const transports: winston.transport[] = [];
-
-// Always add console transport (works in all environments)
-transports.push(new winston.transports.Console({
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    process.env.NODE_ENV === 'production' 
-      ? winston.format.json()
-      : winston.format.combine(
-          winston.format.colorize(),
-          winston.format.simple()
-        )
-  )
-}));
-
-// Only add file transports in development (not available in serverless)
-if (process.env.NODE_ENV !== 'production') {
-  try {
-    transports.push(
-      new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-      new winston.transports.File({ filename: 'logs/combined.log' })
-    );
-  } catch (error) {
-    // Ignore file transport errors in production
-    console.warn('File logging not available in this environment');
-  }
+interface Logger {
+  info: (message: string, ...args: any[]) => void;
+  warn: (message: string, ...args: any[]) => void;
+  error: (message: string, ...args: any[]) => void;
+  debug: (message: string, ...args: any[]) => void;
 }
 
-export const logger = winston.createLogger({
-  level: logLevel,
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json()
-  ),
-  defaultMeta: { service: 'llm-checker' },
-  transports,
-});
+const createLogger = (): Logger => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const timestamp = () => new Date().toISOString();
+
+  return {
+    info: (message: string, ...args: any[]) => {
+      console.log(`[${timestamp()}] INFO: ${message}`, ...args);
+    },
+    warn: (message: string, ...args: any[]) => {
+      console.warn(`[${timestamp()}] WARN: ${message}`, ...args);
+    },
+    error: (message: string, ...args: any[]) => {
+      console.error(`[${timestamp()}] ERROR: ${message}`, ...args);
+    },
+    debug: (message: string, ...args: any[]) => {
+      if (!isProduction) {
+        console.debug(`[${timestamp()}] DEBUG: ${message}`, ...args);
+      }
+    },
+  };
+};
+
+export const logger = createLogger();

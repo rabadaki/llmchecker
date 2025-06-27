@@ -397,10 +397,13 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                           </div>
                           {getStructuredDataScore(site) > 0 && (
                             <span 
-                              className="text-yellow-500 text-sm cursor-help"
+                              className="text-yellow-500 text-sm cursor-help relative group"
                               title={`Structured Data Bonus: +${getStructuredDataScore(site)} points`}
                             >
                               ⭐
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                Structured Data Bonus: +{getStructuredDataScore(site)} points
+                              </div>
                             </span>
                           )}
                         </div>

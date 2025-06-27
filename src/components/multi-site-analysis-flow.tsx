@@ -125,7 +125,7 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
             }
             
             if (site.progress < 95) { // Don't complete until real analysis is done
-              site.progress += Math.random() * 3 + 1 // Slower progress
+              site.progress += 2 // Steady progress instead of random
               hasChanges = true
 
               // Update current step based on progress

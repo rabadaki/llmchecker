@@ -203,58 +203,29 @@ export default function Home() {
   const handleMultiSiteComplete = (results: any[]) => {
     // Use the real analysis results directly
     const transformedResults = results.map((result) => {
-      // Generate realistic scores and recommendations if categories are missing (fallback for demo)
+      // Fallback data for when analysis fails - use safe defaults with no fake bonuses
       const generateFallbackData = () => {
         const scores = {
-          aiAccess: Math.floor(Math.random() * 40) + 60, // 60-100
-          contentStructure: Math.floor(Math.random() * 50) + 50, // 50-100
-          technicalInfra: Math.floor(Math.random() * 60) + 40, // 40-100
-          structuredData: Math.floor(Math.random() * 80) + 20, // 20-100
+          aiAccess: 50, // Conservative default
+          contentStructure: 50, // Conservative default  
+          technicalInfra: 50, // Conservative default
+          structuredData: 0, // Never fake structured data scores
         };
 
-        // Generate realistic recommendations based on scores
+        // Only provide generic recommendations for failed analysis
         const recommendations: Array<{
           title: string;
           impact: "high" | "medium" | "low";
           effort: "easy" | "medium" | "hard";
           category: string;
-        }> = [];
-        
-        if (scores.aiAccess < 80) {
-          recommendations.push({
-            title: "Improve robots.txt configuration",
-            impact: "medium" as const,
-            effort: "easy" as const,
-            category: "AI Access Control"
-          });
-        }
-        
-        if (scores.contentStructure < 70) {
-          recommendations.push({
-            title: "Add descriptive meta descriptions",
+        }> = [
+          {
+            title: "Analysis incomplete - try again",
             impact: "high" as const,
             effort: "easy" as const,
-            category: "Content Structure"
-          });
-        }
-        
-        if (scores.technicalInfra < 60) {
-          recommendations.push({
-            title: "Optimize page load speed",
-            impact: "high" as const,
-            effort: "medium" as const,
-            category: "Technical Infrastructure"
-          });
-        }
-        
-        if (scores.structuredData < 50) {
-          recommendations.push({
-            title: "Add JSON-LD structured data",
-            impact: "medium" as const,
-            effort: "medium" as const,
-            category: "Structured Data"
-          });
-        }
+            category: "System"
+          }
+        ];
 
         return { scores, recommendations };
       };
