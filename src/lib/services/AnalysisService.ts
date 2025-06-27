@@ -97,8 +97,8 @@ export class AnalysisService {
       const parsed = new URL(url);
       return parsed.toString();
     } catch {
-      // Try adding https:// if no protocol
-      if (!url.includes('://')) {
+      // Try adding https:// if no protocol (with additional safety check)
+      if (url && typeof url === 'string' && !url.includes('://')) {
         return this.normalizeUrl(`https://${url}`);
       }
       throw new Error('Invalid URL format');
