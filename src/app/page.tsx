@@ -203,13 +203,13 @@ export default function Home() {
   const handleMultiSiteComplete = (results: any[]) => {
     // Use the real analysis results directly
     const transformedResults = results.map((result) => {
-      // Fallback data for when analysis fails - use safe defaults with no fake bonuses
+      // Fallback data for when analysis fails - use conservative defaults with no fake scores
       const generateFallbackData = () => {
         const scores = {
-          aiAccess: 50, // Conservative default
-          contentStructure: 50, // Conservative default  
-          technicalInfra: 50, // Conservative default
-          structuredData: 0, // Never fake structured data scores
+          aiAccess: 0, // No fake scores - analysis failed
+          contentStructure: 0, // No fake scores - analysis failed
+          technicalInfra: 0, // No fake scores - analysis failed
+          structuredData: 0, // No fake scores - analysis failed
         };
 
         // Only provide generic recommendations for failed analysis
