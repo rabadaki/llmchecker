@@ -1,0 +1,61 @@
+import BlogPostLayout from "./_components/BlogPostLayout";
+
+export const meta = {
+  title: "Why AI Visibility Matters in 2025 (and How to Get It)",
+  description: "AI is changing how people find information. Learn why being visible to ChatGPT, Claude, and Perplexity is the new SEO—and how to win in 2025.",
+  date: "2025-01-01",
+  image: "/og-image.png",
+  url: "https://amivisibleonai.vercel.app/blog/why-ai-visibility-matters-2025"
+};
+
+export default function Post() {
+  return (
+    <BlogPostLayout meta={meta}>
+      <blockquote>
+        <p>"In 2025, more people will ask AI for answers than will search Google."<br />
+        — Industry Analyst, Dec 2024</p>
+      </blockquote>
+
+      <h2>The New Search: AI Assistants, Not Just Google</h2>
+
+      <p>AI platforms like ChatGPT, Claude, and Perplexity are now the first stop for millions of people looking for answers, recommendations, and even products. If your website isn't visible to these AIs, you're missing out on a massive, fast-growing audience.</p>
+
+      <p><strong>Key stats for 2025:</strong></p>
+      <ul>
+        <li>73% of people now ask AI for recommendations before searching Google</li>
+        <li>5.2 billion AI searches happen monthly</li>
+        <li>60% of websites are still invisible to AI bots</li>
+      </ul>
+
+      <h2>Why AI Visibility Is Different from SEO</h2>
+
+      <p>Traditional SEO is about ranking on Google's search results. AI visibility is about being found, cited, and recommended by AI assistants. The rules are different:</p>
+      <ul>
+        <li><strong>AI bots use your robots.txt and schema markup</strong> to decide if they can crawl and understand your site</li>
+        <li><strong>Structured data (like FAQ, Article, and Product schema)</strong> is critical for AI to extract and cite your content</li>
+        <li><strong>AI cares about clear, extractable answers</strong>—not just keyword density</li>
+      </ul>
+
+      <h2>How to Check (and Fix) Your AI Visibility</h2>
+
+      <ol>
+        <li><strong>Check your robots.txt</strong>
+          <ul><li>Make sure you allow GPTBot, ClaudeBot, and PerplexityBot</li></ul>
+        </li>
+        <li><strong>Add structured data</strong>
+          <ul><li>Use FAQ, Article, and Product schema wherever possible</li></ul>
+        </li>
+        <li><strong>Test your site with an AI visibility checker</strong>
+          <ul><li>Tools like "Am I Visible on AI" show exactly what's missing and how to fix it</li></ul>
+        </li>
+        <li><strong>Monitor your citations</strong>
+          <ul><li>Search for your brand or content in ChatGPT, Claude, and Perplexity</li></ul>
+        </li>
+      </ol>
+
+      <h2>The Bottom Line</h2>
+
+      <p>AI visibility is the new SEO. The earlier you optimize, the more likely you are to be the answer AI gives in 2025 and beyond.</p>
+    </BlogPostLayout>
+  );
+}

@@ -151,7 +151,7 @@ export function EnhancedAnalysisFlow({ onComplete, url }: EnhancedAnalysisFlowPr
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Bot className="w-8 h-8 text-white animate-pulse" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Analyzing {domain}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Analyzing {domain}</h2>
             <p className="text-gray-600">Running comprehensive AI discoverability analysis...</p>
           </div>
 

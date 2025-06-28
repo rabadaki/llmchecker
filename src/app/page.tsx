@@ -9,6 +9,7 @@ import { ModernResultsEnhanced } from "@/components/modern-results-enhanced"
 import { ModernHeader } from "@/components/modern-header"
 import { ScrollToResults } from "@/components/scroll-to-results"
 import { FAQSection } from "@/components/faq-section"
+import Head from "next/head"
 
 export interface AnalysisResult {
   url: string
@@ -349,205 +350,219 @@ export default function Home() {
   const isMultiSite = sitesToAnalyze.length > 1
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "name": "Am I Visible on AI - Free AI SEO Tool",
-            "alternateName": "AI Visibility Checker",
-            "description": "Free AI SEO tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI crawlers can access your website. Get instant schema markup analysis and AI optimization recommendations.",
-            "url": "https://amivisibleonai.vercel.app",
-            "applicationCategory": "SEOApplication",
-            "applicationSubCategory": "AI SEO Tool",
-            "operatingSystem": "Web Browser",
-            "softwareVersion": "1.0",
-            "releaseNotes": "Comprehensive AI visibility analysis with robots.txt checking, schema validation, and multi-site comparison",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD",
-              "availability": "https://schema.org/InStock",
-              "priceValidUntil": "2025-12-31"
-            },
-            "creator": {
-              "@type": "Organization",
-              "name": "Am I Visible on AI",
-              "url": "https://amivisibleonai.vercel.app"
-            },
-            "featureList": [
-              "Free AI SEO analysis",
-              "Robots.txt checker for AI crawlers",
-              "Schema markup validation",
-              "ChatGPT visibility testing",
-              "Claude crawler analysis", 
-              "Perplexity optimization",
-              "Technical SEO analysis",
-              "Multi-site comparison",
-              "Instant optimization recommendations",
-              "AI crawler access permissions"
-            ],
-            "keywords": "AI SEO tool, robots.txt checker, AI visibility, ChatGPT SEO, Claude search, schema markup checker",
-            "screenshot": "https://amivisibleonai.vercel.app/screenshot.png",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "156",
-              "bestRating": "5",
-              "worstRating": "1"
-            },
-            "review": [
-              {
-                "@type": "Review",
-                "author": {
-                  "@type": "Person",
-                  "name": "Sarah M."
+    <>
+      <Head>
+        <title>Free AI SEO Tool – Check Your Website's AI Visibility</title>
+        <meta name="description" content="Test if ChatGPT, Claude & Perplexity can find your website. Get free robots.txt analysis, schema markup validation, and instant AI optimization recommendations." />
+        <meta property="og:title" content="Free AI SEO Tool – Check Your Website's AI Visibility" />
+        <meta property="og:description" content="Test if ChatGPT, Claude & Perplexity can find your website. Get free robots.txt analysis, schema markup validation, and instant AI optimization recommendations." />
+        <meta property="og:image" content="https://amivisibleonai.vercel.app/og-image.png" />
+        <meta property="og:url" content="https://amivisibleonai.vercel.app/" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Free AI SEO Tool – Check Your Website's AI Visibility" />
+        <meta name="twitter:description" content="Test if ChatGPT, Claude & Perplexity can find your website. Get free robots.txt analysis, schema markup validation, and instant AI optimization recommendations." />
+        <meta name="twitter:image" content="https://amivisibleonai.vercel.app/og-image.png" />
+      </Head>
+      <div className="min-h-screen bg-gray-50">
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Am I Visible on AI - Free AI SEO Tool",
+              "alternateName": "AI Visibility Checker",
+              "description": "Free AI SEO tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI crawlers can access your website. Get instant schema markup analysis and AI optimization recommendations.",
+              "url": "https://amivisibleonai.vercel.app",
+              "applicationCategory": "SEOApplication",
+              "applicationSubCategory": "AI SEO Tool",
+              "operatingSystem": "Web Browser",
+              "softwareVersion": "1.0",
+              "releaseNotes": "Comprehensive AI visibility analysis with robots.txt checking, schema validation, and multi-site comparison",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "priceValidUntil": "2025-12-31"
+              },
+              "creator": {
+                "@type": "Organization",
+                "name": "Am I Visible on AI",
+                "url": "https://amivisibleonai.vercel.app"
+              },
+              "featureList": [
+                "Free AI SEO analysis",
+                "Robots.txt checker for AI crawlers",
+                "Schema markup validation",
+                "ChatGPT visibility testing",
+                "Claude crawler analysis", 
+                "Perplexity optimization",
+                "Technical SEO analysis",
+                "Multi-site comparison",
+                "Instant optimization recommendations",
+                "AI crawler access permissions"
+              ],
+              "keywords": "AI SEO tool, robots.txt checker, AI visibility, ChatGPT SEO, Claude search, schema markup checker",
+              "screenshot": "https://amivisibleonai.vercel.app/screenshot.png",
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.8",
+                "ratingCount": "156",
+                "bestRating": "5",
+                "worstRating": "1"
+              },
+              "review": [
+                {
+                  "@type": "Review",
+                  "author": {
+                    "@type": "Person",
+                    "name": "Sarah M."
+                  },
+                  "reviewBody": "I had no idea my robots.txt was blocking ChatGPT! Fixed it in 5 minutes and now people actually find my store when they ask AI for product recommendations.",
+                  "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": "5",
+                    "bestRating": "5"
+                  }
                 },
-                "reviewBody": "I had no idea my robots.txt was blocking ChatGPT! Fixed it in 5 minutes and now people actually find my store when they ask AI for product recommendations.",
-                "reviewRating": {
-                  "@type": "Rating",
-                  "ratingValue": "5",
-                  "bestRating": "5"
-                }
-              },
-              {
-                "@type": "Review",
-                "author": {
-                  "@type": "Person", 
-                  "name": "David J."
+                {
+                  "@type": "Review",
+                  "author": {
+                    "@type": "Person", 
+                    "name": "David J."
+                  },
+                  "reviewBody": "This tool showed me exactly what schema markup I was missing. My articles started appearing in Claude responses within a week!",
+                  "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": "5",
+                    "bestRating": "5"
+                  }
                 },
-                "reviewBody": "This tool showed me exactly what schema markup I was missing. My articles started appearing in Claude responses within a week!",
-                "reviewRating": {
-                  "@type": "Rating",
-                  "ratingValue": "5",
-                  "bestRating": "5"
+                {
+                  "@type": "Review",
+                  "author": {
+                    "@type": "Person",
+                    "name": "Maria K."
+                  },
+                  "reviewBody": "Finally, a free tool that actually helps with AI optimization! The recommendations were spot-on and easy to implement.",
+                  "reviewRating": {
+                    "@type": "Rating", 
+                    "ratingValue": "5",
+                    "bestRating": "5"
+                  }
                 }
-              },
-              {
-                "@type": "Review",
-                "author": {
-                  "@type": "Person",
-                  "name": "Maria K."
+              ]
+            })
+          }}
+        />
+
+        {/* FAQ Schema Markup */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "How can I check if my website is visible to ChatGPT?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "That's exactly what our tool does! We analyze your website to see if AI systems like ChatGPT can access and understand your content. We check your robots.txt file for AI crawler permissions, validate your structured data markup, and test how well your content is organized. You'll get a score and specific recommendations to improve how ChatGPT, Claude, and other AI systems can find and reference your site."
+                  }
                 },
-                "reviewBody": "Finally, a free tool that actually helps with AI optimization! The recommendations were spot-on and easy to implement.",
-                "reviewRating": {
-                  "@type": "Rating", 
-                  "ratingValue": "5",
-                  "bestRating": "5"
+                {
+                  "@type": "Question", 
+                  "name": "What is GPTBot and should I allow it on my website?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "GPTBot is OpenAI's official web crawler that feeds information to ChatGPT. If you block GPTBot in your robots.txt file, your content won't appear in ChatGPT responses when people ask questions about your topic. Most websites should allow GPTBot unless they have specific privacy concerns. We'll check if your robots.txt blocks GPTBot and show you exactly how to fix it."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Why isn't my website showing up in AI search results?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "There are usually three main reasons: 1) Your robots.txt file blocks AI crawlers like GPTBot or ClaudeBot, 2) You're missing structured data that helps AI understand your content, or 3) Your content isn't organized in a way that AI can easily extract information. Our analysis identifies exactly which issues your site has and gives you step-by-step fixes."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Is this actually free?", 
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yep, completely free! No hidden costs, no signup required, no credit card needed. You can run as many analyses as you want and check multiple websites. We built this because we think everyone should be able to optimize their AI visibility without paying enterprise fees."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "What if my site is blocking AI crawlers?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "That's actually pretty common! Many sites accidentally block AI crawlers through their robots.txt file or other technical issues. If ChatGPT, Claude, or Perplexity can't crawl your site, you're essentially invisible when people ask AI questions about your topic. We'll show you exactly how to fix this with copy-paste code examples."
+                  }
                 }
-              }
-            ]
-          })
-        }}
-      />
+              ]
+            })
+          }}
+        />
 
-      {/* FAQ Schema Markup */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "How can I check if my website is visible to ChatGPT?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "That's exactly what our tool does! We analyze your website to see if AI systems like ChatGPT can access and understand your content. We check your robots.txt file for AI crawler permissions, validate your structured data markup, and test how well your content is organized. You'll get a score and specific recommendations to improve how ChatGPT, Claude, and other AI systems can find and reference your site."
-                }
-              },
-              {
-                "@type": "Question", 
-                "name": "What is GPTBot and should I allow it on my website?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "GPTBot is OpenAI's official web crawler that feeds information to ChatGPT. If you block GPTBot in your robots.txt file, your content won't appear in ChatGPT responses when people ask questions about your topic. Most websites should allow GPTBot unless they have specific privacy concerns. We'll check if your robots.txt blocks GPTBot and show you exactly how to fix it."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Why isn't my website showing up in AI search results?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "There are usually three main reasons: 1) Your robots.txt file blocks AI crawlers like GPTBot or ClaudeBot, 2) You're missing structured data that helps AI understand your content, or 3) Your content isn't organized in a way that AI can easily extract information. Our analysis identifies exactly which issues your site has and gives you step-by-step fixes."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Is this actually free?", 
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Yep, completely free! No hidden costs, no signup required, no credit card needed. You can run as many analyses as you want and check multiple websites. We built this because we think everyone should be able to optimize their AI visibility without paying enterprise fees."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "What if my site is blocking AI crawlers?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "That's actually pretty common! Many sites accidentally block AI crawlers through their robots.txt file or other technical issues. If ChatGPT, Claude, or Perplexity can't crawl your site, you're essentially invisible when people ask AI questions about your topic. We'll show you exactly how to fix this with copy-paste code examples."
-                }
-              }
-            ]
-          })
-        }}
-      />
+        
+        <ModernHeader />
+        <main>
+          {/* Input section */}
+          {!isAnalyzing && !analysisResult && !multiSiteResults && (
+            <>
+              <UnifiedSiteInput onAnalyze={handleAnalyze} isAnalyzing={false} />
+              <FAQSection />
+            </>
+          )}
 
-      
-      <ModernHeader />
-      <main>
-        {/* Input section */}
-        {!isAnalyzing && !analysisResult && !multiSiteResults && (
-          <>
-            <UnifiedSiteInput onAnalyze={handleAnalyze} isAnalyzing={false} />
-            <FAQSection />
-          </>
-        )}
+          {/* Analysis loading states */}
+          {isAnalyzing && (
+            <div className="border-t border-gray-200">
+              {isMultiSite ? (
+                <MultiSiteAnalysisFlow
+                  sites={sitesToAnalyze}
+                  baseDomain={
+                    sitesToAnalyze[0]?.url ? new URL(sitesToAnalyze[0].url).hostname.replace("www.", "") : "your site"
+                  }
+                  onComplete={handleMultiSiteComplete}
+                />
+              ) : (
+                <EnhancedAnalysisFlow 
+                  onComplete={handleSingleSiteComplete} 
+                  url={sitesToAnalyze[0]?.url}
+                />
+              )}
+            </div>
+          )}
 
-        {/* Analysis loading states */}
-        {isAnalyzing && (
-          <div className="border-t border-gray-200">
-            {isMultiSite ? (
-              <MultiSiteAnalysisFlow
-                sites={sitesToAnalyze}
-                baseDomain={
-                  sitesToAnalyze[0]?.url ? new URL(sitesToAnalyze[0].url).hostname.replace("www.", "") : "your site"
-                }
-                onComplete={handleMultiSiteComplete}
+          {/* Results */}
+          {analysisResult && (
+            <div id="analysis-results" className="border-t border-gray-200">
+              <ScrollToResults shouldScroll={!!analysisResult} />
+              <ModernResultsEnhanced result={analysisResult} onReset={handleReset} />
+            </div>
+          )}
+
+          {multiSiteResults && (
+            <div id="analysis-results" className="border-t border-gray-200">
+              <ScrollToResults shouldScroll={!!multiSiteResults} />
+              <MultiSiteDashboard 
+                results={multiSiteResults} 
+                originalSearchTerm={originalSearchTerm} 
+                onReset={handleReset}
+                shareUrl={shareUrl || undefined}
               />
-            ) : (
-              <EnhancedAnalysisFlow 
-                onComplete={handleSingleSiteComplete} 
-                url={sitesToAnalyze[0]?.url}
-              />
-            )}
-          </div>
-        )}
-
-        {/* Results */}
-        {analysisResult && (
-          <div id="analysis-results" className="border-t border-gray-200">
-            <ScrollToResults shouldScroll={!!analysisResult} />
-            <ModernResultsEnhanced result={analysisResult} onReset={handleReset} />
-          </div>
-        )}
-
-        {multiSiteResults && (
-          <div id="analysis-results" className="border-t border-gray-200">
-            <ScrollToResults shouldScroll={!!multiSiteResults} />
-            <MultiSiteDashboard 
-              results={multiSiteResults} 
-              originalSearchTerm={originalSearchTerm} 
-              onReset={handleReset}
-              shareUrl={shareUrl || undefined}
-            />
-          </div>
-        )}
-      </main>
-    </div>
+            </div>
+          )}
+        </main>
+      </div>
+    </>
   )
 }

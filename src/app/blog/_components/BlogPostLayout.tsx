@@ -1,0 +1,81 @@
+import { ModernHeader } from "@/components/modern-header";
+
+interface BlogPostMeta {
+  title: string;
+  description: string;
+  date: string;
+  image?: string;
+  url?: string;
+}
+
+interface BlogPostLayoutProps {
+  children: React.ReactNode;
+  meta: BlogPostMeta;
+}
+
+export default function BlogPostLayout({ children, meta }: BlogPostLayoutProps) {
+  return (
+    <>
+      {/* Article schema for SEO/AI visibility */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": meta.title,
+            "description": meta.description,
+            "datePublished": meta.date,
+            "author": {
+              "@type": "Organization",
+              "name": "Am I Visible on AI"
+            },
+            "image": meta.image || "/og-image.png",
+            "mainEntityOfPage": meta.url || "https://amivisibleonai.vercel.app/blog"
+          })
+        }}
+      />
+      <div className="min-h-screen bg-gray-50">
+        <main className="max-w-6xl mx-auto py-12 px-6">
+          {/* Article Header */}
+          <header className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">AI Visibility</span>
+              <span className="inline-block bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium">New</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">{meta.title}</h1>
+            <p className="text-xl text-gray-600 mb-4 max-w-3xl mx-auto leading-relaxed">{meta.description}</p>
+            <time className="text-sm text-gray-500">
+              Published {new Date(meta.date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </time>
+          </header>
+
+          {/* Article Content */}
+          <article className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="prose prose-lg prose-gray max-w-none p-8 md:p-12">
+              {children}
+            </div>
+          </article>
+
+          {/* Call to Action */}
+          <div className="mt-12 text-center">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Ready to check your AI visibility?</h3>
+              <p className="text-gray-600 mb-6">See if ChatGPT, Claude, and Perplexity can find your website with our free analysis tool.</p>
+              <a 
+                href="/" 
+                className="inline-block bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-200"
+              >
+                Try our free AI visibility checker
+              </a>
+            </div>
+          </div>
+        </main>
+      </div>
+    </>
+  );
+} 

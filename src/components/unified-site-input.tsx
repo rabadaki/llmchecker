@@ -247,7 +247,7 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
                   <Button
                     type="submit"
                     size="lg"
-                    className="h-14 px-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                    className="h-14 px-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
                     disabled={!url.trim() || isAnalyzing || isDiscovering}
                   >
                     {isDiscovering ? (

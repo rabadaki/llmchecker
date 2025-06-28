@@ -6,7 +6,7 @@ import { GearIcon } from "@radix-ui/react-icons"
 
 export function ModernHeader() {
   return (
-    <header className="border-b border-gray-200 bg-white" role="banner">
+    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white" role="banner">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
@@ -24,17 +24,16 @@ export function ModernHeader() {
             <a href="#analyzer-heading" className="text-sm text-gray-600 hover:text-gray-900">
               How it works
             </a>
-            <a href="#ai-models-heading" className="text-sm text-gray-600 hover:text-gray-900">
-              AI Models
-            </a>
-            <a href="/" className="text-sm text-gray-600 hover:text-gray-900">
-              Analyze Site
+            <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900">
+              Blog
             </a>
           </nav>
 
-          {/* Actions - Hidden for now */}
+          {/* Actions */}
           <div className="flex items-center space-x-4">
-            {/* Authentication buttons will be added when implementing Clerk */}
+            <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors">
+              Analyze your site
+            </a>
           </div>
         </div>
       </div>

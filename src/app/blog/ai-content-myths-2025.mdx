@@ -1,0 +1,47 @@
+import BlogPostLayout from "./_components/BlogPostLayout";
+
+export const meta = {
+  title: "5 Myths About AI Content & Visibility in 2025",
+  description: "Don't fall for these common misconceptions about AI content and how to get your site seen by ChatGPT, Claude, and Perplexity in 2025.",
+  date: "2025-02-01",
+  image: "/og-image.png",
+  url: "https://amivisibleonai.vercel.app/blog/ai-content-myths-2025"
+};
+
+export default function Post() {
+  return (
+    <BlogPostLayout meta={meta}>
+      <p className="text-lg text-gray-700 mb-8">AI is changing the rules for content and discoverability. But there's a lot of bad advice out there. Here are the top myths to avoid this year:</p>
+
+      <h2>Myth 1: "If I rank on Google, I'll show up in ChatGPT."</h2>
+
+      <p><strong>Reality:</strong> AI assistants like ChatGPT, Claude, and Perplexity don't just scrape Google's search results. They use their own crawlers (like GPTBot, ClaudeBot, PerplexityBot) and rely on structured data, robots.txt, and direct content extraction. Many sites that rank on Google are actually invisible to AI because they block these bots or lack the right schema markup.</p>
+
+      <p><strong>Action:</strong> Check your robots.txt file and make sure you're not blocking AI crawlers. Add structured data like FAQ, Article, and Product schema to help AI understand your content.</p>
+
+      <h2>Myth 2: "AI-generated content will hurt my visibility."</h2>
+
+      <p><strong>Reality:</strong> AI tools can actually help you create better structured content that's more visible to AI systems. The key is using AI to enhance human expertise, not replace it entirely. AI can help you create FAQ sections, structured data, and clear explanations that AI systems love.</p>
+
+      <p><strong>Action:</strong> Use AI tools to help structure your content, create FAQ sections, and optimize for clarity. Just make sure the content provides genuine value and expertise.</p>
+
+      <h2>Myth 3: "I need to stuff my content with AI-related keywords."</h2>
+
+      <p><strong>Reality:</strong> AI systems care more about content structure and clarity than keyword density. They're looking for clear, extractable answers to specific questions. Focus on comprehensive, well-organized content that directly answers what people are asking.</p>
+
+      <p><strong>Action:</strong> Write content that directly answers common questions in your niche. Use clear headings, bullet points, and structured data to make it easy for AI to extract and cite your information.</p>
+
+      <h2>Myth 4: "Only big brands can get cited by AI."</h2>
+
+      <p><strong>Reality:</strong> AI systems cite authoritative, well-structured content regardless of brand size. Small businesses and individual experts who optimize for AI visibility often get cited more than larger companies that haven't adapted their content strategy.</p>
+
+      <p><strong>Action:</strong> Focus on becoming the go-to source for specific topics in your niche. Create comprehensive, well-structured content and make sure AI crawlers can access and understand it.</p>
+
+      <h2>Myth 5: "It's too early to worry about AI visibility."</h2>
+
+      <p><strong>Reality:</strong> Early adopters are already getting cited and recommended by AI assistants. As more people use AI for answers, being visible now means you'll be the source AI recommends in your niche. Waiting means playing catch-up later.</p>
+
+      <p><strong>Action:</strong> Run a free AI visibility check, fix any issues, and monitor your citations in ChatGPT, Claude, and Perplexity. The earlier you start, the bigger your advantage.</p>
+    </BlogPostLayout>
+  );
+}

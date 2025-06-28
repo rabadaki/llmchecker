@@ -194,7 +194,7 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Globe className="w-8 h-8 text-white animate-pulse" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Analyzing {baseDomain}'s Pages</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Analyzing {baseDomain}'s Pages</h2>
             <p className="text-gray-600">Running comprehensive analysis across {sites.length} pages...</p>
           </div>
 
@@ -245,7 +245,7 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">{site.title}</h3>
+                        <h3 className="text-lg font-bold text-gray-900 mb-3">{site.title}</h3>
                         <Badge variant="secondary" className="text-xs">
                           {site.type}
                         </Badge>
