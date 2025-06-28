@@ -254,7 +254,7 @@ export default function Home() {
 
       return {
         url: result.url,
-        type: result.type,
+        type: result.siteInfo?.category || result.type || "homepage",
         title: result.title || (() => {
           const urlObj = new URL(result.url);
           // Show subdomain.domain.com or domain.com/path
@@ -269,7 +269,7 @@ export default function Home() {
             return urlObj.hostname;
           }
         })(),
-        overallScore: result.score,
+        overallScore: result.overallScore || 0,
         categories: categoryScores,
         insights: result.insights || [],
         recommendations: realData.recommendations,

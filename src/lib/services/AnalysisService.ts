@@ -436,13 +436,16 @@ export class AnalysisService {
 
   private scoreSchemaMarkup($: any): number {
     const schemaCount = $('script[type="application/ld+json"]').length;
+    if (schemaCount === 0) return 0; // No structured data
     return Math.min(100, schemaCount * 25 + 25);
   }
 
   private validateSchemas($: any): number {
     // Simplified validation - just check if JSON-LD exists and is valid JSON
     let validSchemas = 0;
+    let totalSchemas = 0;
     $('script[type="application/ld+json"]').each((_, element) => {
+      totalSchemas++;
       try {
         JSON.parse($(element).html() || '');
         validSchemas++;
@@ -450,24 +453,28 @@ export class AnalysisService {
         // Invalid JSON
       }
     });
+    if (totalSchemas === 0) return 0; // No schemas to validate
     return Math.min(100, validSchemas * 30 + 40);
   }
 
   private checkRichResults($: any): number {
     // Check for common rich result schemas
-    let richResultScore = 40;
+    let richResultScore = 0;
+    let hasSchema = false;
     $('script[type="application/ld+json"]').each((_, element) => {
+      hasSchema = true;
       try {
         const data = JSON.parse($(element).html() || '');
         const type = data['@type'];
         if (['Article', 'Product', 'Review', 'Event', 'Organization'].includes(type)) {
-          richResultScore += 15;
+          richResultScore += 20;
         }
       } catch {
         // Invalid JSON
       }
     });
-    return Math.min(100, richResultScore);
+    if (!hasSchema) return 0; // No schemas present
+    return Math.min(100, richResultScore + 40); // Base 40 points if schemas exist
   }
 
   private scoreHeadingHierarchy($: any): number {

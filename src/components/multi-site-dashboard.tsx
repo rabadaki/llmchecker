@@ -99,9 +99,9 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
     }
   };
 
-  const averageScore = Math.round(results.reduce((sum, site) => sum + site.overallScore, 0) / results.length)
-  const bestPerforming = results.reduce((best, site) => (site.overallScore > best.overallScore ? site : best))
-  const worstPerforming = results.reduce((worst, site) => (site.overallScore < worst.overallScore ? site : worst))
+  const averageScore = Math.round(results.reduce((sum, site) => sum + (site.overallScore || 0), 0) / results.length)
+  const bestPerforming = results.reduce((best, site) => ((site.overallScore || 0) > (best.overallScore || 0) ? site : best))
+  const worstPerforming = results.reduce((worst, site) => ((site.overallScore || 0) < (worst.overallScore || 0) ? site : worst))
 
   const categoryAverages = {
     aiAccess: Math.round(results.reduce((sum, site) => sum + site.categories.aiAccess, 0) / results.length),

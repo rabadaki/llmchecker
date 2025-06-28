@@ -70,29 +70,58 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
         const result = await response.json()
         
         // Transform API result to match expected format
-        const transformedResults = result.analyses.map((analysis: any, index: number) => ({
-          url: analysis.url,
-          type: analysis.siteInfo.category,
-          title: sites[index]?.title || (analysis.siteInfo.url.includes('www.') ? 
-            new URL(analysis.siteInfo.url).hostname.replace('www.', '') : 
-            new URL(analysis.siteInfo.url).hostname),
-          score: analysis.overallScore,
-          categories: analysis.categories, // Pass through the categories array
-          insights: [
-            `Score: ${analysis.overallScore}/100`,
-            `${analysis.categories.length} categories analyzed`,
-            `${analysis.categories.reduce((sum: number, cat: any) => sum + cat.recommendations.length, 0)} recommendations`
-          ],
-          recommendations: analysis.categories.flatMap((cat: any) => 
-            cat.recommendations.map((rec: string) => ({
-              title: rec.replace(/^[🚫⚠️⭐🔧✅🏗️📝📋🖥️⚡🗺️🧹📄🤖📅🔄✍️📚🎯📊📈📍🔗🔒]/g, '').split(':')[0].trim(),
-              impact: rec.includes('Add') || rec.includes('Enable') || rec.includes('Create') ? 'high' : 
-                     rec.includes('Improve') || rec.includes('Optimize') ? 'medium' : 'low',
-              effort: rec.includes('robots.txt') || rec.includes('sitemap') || rec.includes('HTTPS') ? 'easy' :
-                     rec.includes('structured data') || rec.includes('schema') ? 'medium' : 'hard',
-              category: cat.name
-            }))
-          )
+        const transformedResults = result.analyses.map((analysis: any, index: number) => {
+          // Extract scores from categories array
+          const categoriesObject: any = {};
+          analysis.categories.forEach((cat: any) => {
+            // Map category IDs to the expected property names
+            switch(cat.id) {
+              case 'crawlability_access':
+                categoriesObject.aiAccess = cat.score;
+                break;
+              case 'content_structure':
+                categoriesObject.contentStructure = cat.score;
+                break;
+              case 'technical_infrastructure':
+                categoriesObject.technicalInfra = cat.score;
+                break;
+              case 'structured_data':
+                categoriesObject.structuredData = cat.score;
+                break;
+            }
+          });
+
+          // Debug log to understand the data
+          console.log(`Site: ${analysis.url}`, {
+            categories: analysis.categories.map((cat: any) => ({ id: cat.id, score: cat.score })),
+            transformedCategories: categoriesObject,
+            overallScore: analysis.overallScore
+          });
+
+          return {
+            url: analysis.url,
+            type: analysis.siteInfo.category,
+            title: sites[index]?.title || (analysis.siteInfo.url.includes('www.') ? 
+              new URL(analysis.siteInfo.url).hostname.replace('www.', '') : 
+              new URL(analysis.siteInfo.url).hostname),
+            overallScore: analysis.overallScore,
+            categories: categoriesObject, // Pass the transformed categories object
+            insights: [
+              `Score: ${analysis.overallScore}/100`,
+              `${analysis.categories.length} categories analyzed`,
+              `${analysis.categories.reduce((sum: number, cat: any) => sum + cat.recommendations.length, 0)} recommendations`
+            ],
+            recommendations: analysis.categories.flatMap((cat: any) => 
+              cat.recommendations.map((rec: string) => ({
+                title: rec.replace(/^[🚫⚠️⭐🔧✅🏗️📝📋🖥️⚡🗺️🧹📄🤖📅🔄✍️📚🎯📊📈📍🔗🔒]/g, '').split(':')[0].trim(),
+                impact: rec.includes('Add') || rec.includes('Enable') || rec.includes('Create') ? 'high' : 
+                       rec.includes('Improve') || rec.includes('Optimize') ? 'medium' : 'low',
+                effort: rec.includes('robots.txt') || rec.includes('sitemap') || rec.includes('HTTPS') ? 'easy' :
+                       rec.includes('structured data') || rec.includes('schema') ? 'medium' : 'hard',
+                category: cat.name
+              }))
+            )
+          };
         }))
 
         onComplete(transformedResults)
