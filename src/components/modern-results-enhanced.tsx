@@ -165,9 +165,9 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
         </div>
 
         {/* Site Overview Table - consistent with multi-site dashboard */}
-        <div className="bg-white rounded-lg border mb-8 overflow-hidden">
+        <div className="bg-white rounded-lg border mb-6 sm:mb-8 overflow-hidden">
           <div className="p-4 sm:p-6 border-b border-gray-200">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Site Analysis Overview</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">Site Analysis Overview</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -234,9 +234,9 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
         </div>
 
         {/* Key Insights & Category Breakdown - same as multi-site */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-12">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Insights</h3>
+        <div className="grid lg:grid-cols-2 gap-4 sm:gap-8 mb-8 sm:mb-12">
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">Key Insights</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
                 <AlertTriangle className="w-5 h-5 text-blue-600 mt-0.5" />
@@ -268,8 +268,8 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Breakdown</h3>
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">Category Breakdown</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-2">
@@ -305,34 +305,34 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
 
 
         {/* Recommendations Section - Direct, no tabs */}
-        <Card className="p-8">
+        <Card className="p-4 sm:p-6 lg:p-8">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 rounded-xl bg-green-50">
               <Target className="w-8 h-8 text-green-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Recommendations</h2>
-              <p className="text-gray-600">Prioritized improvements to boost your AI discoverability</p>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">Recommendations</h2>
+              <p className="text-sm sm:text-base text-gray-600">Prioritized improvements to boost your AI discoverability</p>
             </div>
           </div>
 
           {/* Recommendations Stats */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="text-center p-4 bg-red-50 rounded-lg">
-              <div className="text-2xl font-bold text-red-600 mb-1">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="text-center p-3 sm:p-4 bg-red-50 rounded-lg">
+              <div className="text-xl sm:text-2xl font-bold text-red-600 mb-1">
                   {siteResult.recommendations.filter((r) => r.impact === "high").length}
                 </div>
-                <p className="text-sm text-red-700">High Impact</p>
+                <p className="text-xs sm:text-sm text-red-700">High Impact</p>
               </div>
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600 mb-1">
+              <div className="text-center p-3 sm:p-4 bg-orange-50 rounded-lg">
+                <div className="text-xl sm:text-2xl font-bold text-orange-600 mb-1">
                   {siteResult.recommendations.filter((r) => r.effort === "easy").length}
                 </div>
-                <p className="text-sm text-orange-700">Quick Wins</p>
+                <p className="text-xs sm:text-sm text-orange-700">Quick Wins</p>
               </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600 mb-1">{siteResult.recommendations.length}</div>
-                <p className="text-sm text-blue-700">Total Improvements</p>
+              <div className="text-center p-3 sm:p-4 bg-blue-50 rounded-lg">
+                <div className="text-xl sm:text-2xl font-bold text-blue-600 mb-1">{siteResult.recommendations.length}</div>
+                <p className="text-xs sm:text-sm text-blue-700">Total Improvements</p>
               </div>
             </div>
 
@@ -402,7 +402,7 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
               ) : (
                 <div className="text-center py-12">
                   <Lightbulb className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Great Job!</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">Great Job!</h3>
                   <p className="text-gray-600">No specific recommendations at this time. Your site is performing well!</p>
                 </div>
               )}
