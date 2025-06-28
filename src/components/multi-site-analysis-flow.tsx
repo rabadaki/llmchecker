@@ -91,12 +91,6 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
             }
           });
 
-          // Debug log to understand the data
-          console.log(`Site: ${analysis.url}`, {
-            categories: analysis.categories.map((cat: any) => ({ id: cat.id, score: cat.score })),
-            transformedCategories: categoriesObject,
-            overallScore: analysis.overallScore
-          });
 
           return {
             url: analysis.url,
@@ -122,9 +116,9 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
               }))
             )
           };
-        }))
+        });
 
-        onComplete(transformedResults)
+        onComplete(transformedResults);
         
       } catch (error) {
         console.error('Multi-site analysis failed:', error)

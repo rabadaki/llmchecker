@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { SiteDiscoveryService } from '../../../lib/services/SiteDiscoveryService';
+import { SiteDiscoveryService, SiteDiscoveryResult } from '../../../lib/services/SiteDiscoveryService';
 import { logger } from '../../../lib/utils/logger';
 
 const siteDiscoveryService = new SiteDiscoveryService();
@@ -21,23 +21,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`Site discovery request received for: ${body.inputUrl}`);
+    logger.info(`Site discovery request received for: ${body.inputUrl}`);
 
-    // Try smart discovery first
-    const result = await siteDiscoveryService.discoverSites(body.inputUrl);
-    console.log(`Site discovery completed for ${body.inputUrl}: ${result.totalFound} sites found, ${result.analysisReady.length} accessible`);
+    // Add timeout wrapper for Vercel
+    const discoveryPromise = siteDiscoveryService.discoverSites(body.inputUrl);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Discovery timeout after 45 seconds')), 45000)
+    );
+
+    const result = await Promise.race([discoveryPromise, timeoutPromise]) as SiteDiscoveryResult;
+    logger.info(`Site discovery completed for ${body.inputUrl}: ${result.totalFound} sites found, ${result.analysisReady.length} accessible`);
+    
     return NextResponse.json(result);
 
   } catch (error) {
-    console.error('Site discovery API failed:', error);
+    logger.error('Site discovery API failed:', error);
+    
+    // Return more user-friendly error messages
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const isTimeout = errorMessage.includes('timeout');
     
     return NextResponse.json(
       { 
-        error: 'Discovery failed', 
-        details: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
+        error: isTimeout ? 'Analysis timeout - please try a simpler URL' : 'Discovery failed', 
+        details: errorMessage,
+        retryable: !isTimeout
       },
-      { status: 500 }
+      { status: isTimeout ? 408 : 500 }
     );
   }
 }

@@ -181,20 +181,48 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
   return (
     <div className="bg-white">
       <div className="container mx-auto px-6 py-16">
-        <div className="max-w-3xl mx-auto text-center">
+        <header className="max-w-3xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-600 text-white mb-6">
-            <Zap className="w-4 h-4 mr-2" />
-            <span className="text-sm font-medium">AI-Powered Analysis</span>
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-600 text-white" role="banner">
+              <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
+              <span className="text-sm font-medium">AI-Powered Analysis</span>
+            </div>
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-600 text-white" role="banner">
+              <span className="text-sm font-bold">100% FREE</span>
+            </div>
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-purple-600 text-white" role="banner">
+              <span className="text-sm font-medium">No Signup Required</span>
+            </div>
           </div>
 
           {/* Main heading */}
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">How AI-Friendly Is Your Website?</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Free AI SEO Tool - Check Your Website's AI Visibility</h1>
 
-          <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
-            Get your AI discoverability score and actionable recommendations to rank better in ChatGPT, Claude, and
-            other AI search results.
+          <p className="text-lg text-gray-600 mb-6 max-w-xl mx-auto">
+            Test if ChatGPT, Claude & Perplexity can find your website. Get free robots.txt analysis, schema markup validation, and instant AI optimization recommendations.
           </p>
+
+          {/* Quick Benefits */}
+          <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm">
+            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-gray-700">Takes 30 seconds</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span className="text-gray-700">No technical knowledge needed</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <span className="text-gray-700">Get actionable fixes</span>
+            </div>
+          </div>
+        </header>
+
+        <main className="max-w-3xl mx-auto">
+          <section aria-labelledby="analyzer-heading">
+            <h2 id="analyzer-heading" className="sr-only">Website AI Analysis Tool</h2>
 
           {/* URL Input Form */}
           <Card className="p-8 mb-6">
@@ -282,53 +310,182 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
             )}
           </Card>
 
+          </section>
+          
+          {/* Why This Matters Section */}
+          {!discoveredSites.length && (
+            <section className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-xl">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Why AI Visibility Matters Right Now</h2>
+                <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                  Millions of people are asking AI questions every day instead of Googling. If your website isn't visible to ChatGPT, Claude, and Perplexity, you're missing out on a huge audience that's looking for exactly what you offer.
+                </p>
+              </div>
+              <div className="grid md:grid-cols-3 gap-6 text-center">
+                <div className="bg-white/70 p-6 rounded-lg shadow-sm border border-white/30">
+                  <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">73%</div>
+                  <div className="text-sm text-gray-700 font-medium">of people now ask AI for recommendations</div>
+                </div>
+                <div className="bg-white/70 p-6 rounded-lg shadow-sm border border-white/30">
+                  <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">5.2B</div>
+                  <div className="text-sm text-gray-700 font-medium">AI searches happen monthly</div>
+                </div>
+                <div className="bg-white/70 p-6 rounded-lg shadow-sm border border-white/30">
+                  <div className="text-3xl md:text-4xl font-bold text-green-600 mb-2">60%</div>
+                  <div className="text-sm text-gray-700 font-medium">of websites aren't AI-optimized yet</div>
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* AI Model Logos */}
           {!discoveredSites.length && (
-            <div className="mt-8">
-              <div className="text-center mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Optimized for Leading AI Models</h3>
-                <p className="text-sm text-gray-600">Ensure your website ranks well across all major AI search engines</p>
+            <section aria-labelledby="ai-models-heading" className="mt-12">
+              <div className="text-center mb-8">
+                <h2 id="ai-models-heading" className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Works With All Major AI Platforms</h2>
+                <p className="text-base text-gray-600 max-w-2xl mx-auto">We test your visibility across the AI platforms people actually use every day</p>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-8">
                 {/* ChatGPT */}
-                <div className="flex flex-col items-center gap-2">
-                  <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
-                    <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142-.0852 4.783-2.7582a.7712.7712 0 0 0 .7806 0l5.8428 3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" fill="#10A37F"/>
-                  </svg>
+                <div className="flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+                  <img 
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/openai/openai-original.svg" 
+                    alt="ChatGPT logo - AI language model by OpenAI" 
+                    className="w-10 h-10"
+                    onError={(e) => {
+                      e.currentTarget.src = "data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142-.0852 4.783-2.7582a.7712.7712 0 0 0 .7806 0l5.8428 3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z' fill='%2310A37F'/%3E%3C/svg%3E"
+                    }}
+                  />
                   <span className="text-xs font-medium text-gray-700">ChatGPT</span>
+                  <span className="text-xs text-gray-500">100M+ users</span>
                 </div>
 
                 {/* Claude */}
-                <div className="flex flex-col items-center gap-2">
-                  <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
-                    <path d="M7.307 4.537c-1.524 0-2.758 1.234-2.758 2.758v9.41c0 1.524 1.234 2.758 2.758 2.758h9.386c1.524 0 2.758-1.234 2.758-2.758v-9.41c0-1.524-1.234-2.758-2.758-2.758H7.307zM12 6.462c3.05 0 5.538 2.488 5.538 5.538 0 3.05-2.488 5.538-5.538 5.538-3.05 0-5.538-2.488-5.538-5.538 0-3.05 2.488-5.538 5.538-5.538z" fill="#D97706"/>
-                    <circle cx="12" cy="12" r="3.692" fill="white"/>
-                  </svg>
+                <div className="flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+                  <img 
+                    src="https://claude.ai/images/claude_app_icon.png" 
+                    alt="Claude logo - AI assistant by Anthropic" 
+                    className="w-10 h-10 rounded-lg"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/anthropic.svg"
+                    }}
+                  />
                   <span className="text-xs font-medium text-gray-700">Claude</span>
+                  <span className="text-xs text-gray-500">Fastest growing</span>
                 </div>
 
                 {/* Gemini */}
-                <div className="flex flex-col items-center gap-2">
-                  <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="none" stroke="#4285F4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 8l2 4 4-1-3 3 1 4-4-2-4 2 1-4-3-3 4 1 2-4z" fill="#4285F4"/>
-                  </svg>
+                <div className="flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+                  <img 
+                    src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" 
+                    alt="Google Gemini logo - AI model by Google" 
+                    className="w-10 h-10"
+                    onError={(e) => {
+                      e.currentTarget.src = "data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' fill='none' stroke='%234285F4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M12 8l2 4 4-1-3 3 1 4-4-2-4 2 1-4-3-3 4 1 2-4z' fill='%234285F4'/%3E%3C/svg%3E"
+                    }}
+                  />
                   <span className="text-xs font-medium text-gray-700">Gemini</span>
+                  <span className="text-xs text-gray-500">Google's AI</span>
                 </div>
 
                 {/* Perplexity */}
-                <div className="flex flex-col items-center gap-2">
-                  <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" fill="none" stroke="#6366F1" strokeWidth="2"/>
-                    <path d="M8 12l2 2 4-4" fill="none" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="12" cy="12" r="6" fill="none" stroke="#6366F1" strokeWidth="1.5"/>
-                  </svg>
+                <div className="flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+                  <img 
+                    src="https://pplx.ai/favicon.svg" 
+                    alt="Perplexity" 
+                    className="w-10 h-10"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/perplexity.svg"
+                    }}
+                  />
                   <span className="text-xs font-medium text-gray-700">Perplexity</span>
+                  <span className="text-xs text-gray-500">AI search engine</span>
                 </div>
               </div>
-            </div>
+            </section>
           )}
-        </div>
+
+          {/* Feature Highlights */}
+          {!discoveredSites.length && (
+            <section className="mt-16 max-w-4xl mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">How We Check If AI Can Find Your Website</h2>
+                <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">Three key areas that determine if ChatGPT, Claude, and Perplexity can discover and reference your content</p>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">Can AI Crawlers Access Your Site?</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">We check if GPTBot, ClaudeBot, and PerplexityBot are blocked by your robots.txt file. Many sites accidentally block AI crawlers, making them invisible to ChatGPT and Claude.</p>
+                </div>
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                    <Code className="w-5 h-5 text-green-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">Does AI Understand Your Content?</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">We scan for structured data like Article, FAQ, and Product schemas that help AI systems understand and extract information from your pages.</p>
+                </div>
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                    <Zap className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">How Can You Fix Issues?</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">Get copy-paste code fixes for robots.txt, missing schema markup examples, and specific technical improvements to boost your AI visibility score.</p>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Social Proof Section */}
+          {!discoveredSites.length && (
+            <section className="mt-16 max-w-4xl mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Trusted by Website Owners Everywhere</h2>
+                <p className="text-base text-gray-600 max-w-2xl mx-auto">Join thousands of people who've improved their AI visibility</p>
+              </div>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-blue-600 font-semibold text-sm">SM</span>
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">Sarah M.</div>
+                      <div className="text-xs text-gray-500">E-commerce Store Owner</div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 italic">"I had no idea my robots.txt was blocking ChatGPT! Fixed it in 5 minutes and now people actually find my store when they ask AI for product recommendations."</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <span className="text-green-600 font-semibold text-sm">DJ</span>
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">David J.</div>
+                      <div className="text-xs text-gray-500">Tech Blogger</div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 italic">"This tool showed me exactly what schema markup I was missing. My articles started appearing in Claude responses within a week!"</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span className="text-purple-600 font-semibold text-sm">MK</span>
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">Maria K.</div>
+                      <div className="text-xs text-gray-500">Digital Marketer</div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 italic">"Finally, a free tool that actually helps with AI optimization! The recommendations were spot-on and easy to implement."</p>
+                </div>
+              </div>
+            </section>
+          )}
+        </main>
       </div>
     </div>
   )

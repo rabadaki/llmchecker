@@ -57,11 +57,11 @@ export async function POST(request: NextRequest) {
       url: site.url || 'unknown.com',
       type: site.type || 'homepage',
       title: site.title || 'Unknown Site',
-      overallScore: site.overallScore || 50,
+      overallScore: site.overallScore || 0,
       categories: {
-        aiAccess: site.categories?.aiAccess || 50,
-        contentStructure: site.categories?.contentStructure || 50, 
-        technicalInfra: site.categories?.technicalInfra || 50,
+        aiAccess: site.categories?.aiAccess || 0,
+        contentStructure: site.categories?.contentStructure || 0, 
+        technicalInfra: site.categories?.technicalInfra || 0,
         structuredData: site.categories?.structuredData || 0
       },
       insights: site.insights || [],

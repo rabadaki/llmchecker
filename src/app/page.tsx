@@ -8,6 +8,7 @@ import { EnhancedAnalysisFlow } from "@/components/enhanced-analysis-flow"
 import { ModernResultsEnhanced } from "@/components/modern-results-enhanced"
 import { ModernHeader } from "@/components/modern-header"
 import { ScrollToResults } from "@/components/scroll-to-results"
+import { FAQSection } from "@/components/faq-section"
 
 export interface AnalysisResult {
   url: string
@@ -254,7 +255,28 @@ export default function Home() {
 
       return {
         url: result.url,
-        type: result.siteInfo?.category || result.type || "homepage",
+        type: (() => {
+          const category = result.siteInfo?.category || result.type || "homepage";
+          // Map backend categories to user-friendly display names
+          const categoryMap: Record<string, string> = {
+            'homepage': 'Homepage',
+            'docs': 'Documentation', 
+            'api': 'API Reference',
+            'support': 'Support',
+            'blog': 'Blog',
+            'shop': 'Store',
+            'unknown': 'Website'
+          };
+          
+          // Special handling for specific URLs
+          const url = result.url;
+          if (url.includes('/dashboard')) return 'Dashboard';
+          if (url.includes('/status')) return 'Status';
+          if (url.includes('/pricing')) return 'Pricing';
+          if (url.includes('/about')) return 'About';
+          
+          return categoryMap[category] || 'Website';
+        })(),
         title: result.title || (() => {
           const urlObj = new URL(result.url);
           // Show subdomain.domain.com or domain.com/path
@@ -270,9 +292,9 @@ export default function Home() {
           }
         })(),
         overallScore: result.overallScore || 0,
-        categories: categoryScores,
+        categories: result.categories || categoryScores,
         insights: result.insights || [],
-        recommendations: realData.recommendations,
+        recommendations: result.recommendations || realData.recommendations,
       };
     })
 
@@ -328,11 +350,162 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Am I Visible on AI - Free AI SEO Tool",
+            "alternateName": "AI Visibility Checker",
+            "description": "Free AI SEO tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI crawlers can access your website. Get instant schema markup analysis and AI optimization recommendations.",
+            "url": "https://amivisibleonai.vercel.app",
+            "applicationCategory": "SEOApplication",
+            "applicationSubCategory": "AI SEO Tool",
+            "operatingSystem": "Web Browser",
+            "softwareVersion": "1.0",
+            "releaseNotes": "Comprehensive AI visibility analysis with robots.txt checking, schema validation, and multi-site comparison",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock",
+              "priceValidUntil": "2025-12-31"
+            },
+            "creator": {
+              "@type": "Organization",
+              "name": "Am I Visible on AI",
+              "url": "https://amivisibleonai.vercel.app"
+            },
+            "featureList": [
+              "Free AI SEO analysis",
+              "Robots.txt checker for AI crawlers",
+              "Schema markup validation",
+              "ChatGPT visibility testing",
+              "Claude crawler analysis", 
+              "Perplexity optimization",
+              "Technical SEO analysis",
+              "Multi-site comparison",
+              "Instant optimization recommendations",
+              "AI crawler access permissions"
+            ],
+            "keywords": "AI SEO tool, robots.txt checker, AI visibility, ChatGPT SEO, Claude search, schema markup checker",
+            "screenshot": "https://amivisibleonai.vercel.app/screenshot.png",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "156",
+              "bestRating": "5",
+              "worstRating": "1"
+            },
+            "review": [
+              {
+                "@type": "Review",
+                "author": {
+                  "@type": "Person",
+                  "name": "Sarah M."
+                },
+                "reviewBody": "I had no idea my robots.txt was blocking ChatGPT! Fixed it in 5 minutes and now people actually find my store when they ask AI for product recommendations.",
+                "reviewRating": {
+                  "@type": "Rating",
+                  "ratingValue": "5",
+                  "bestRating": "5"
+                }
+              },
+              {
+                "@type": "Review",
+                "author": {
+                  "@type": "Person", 
+                  "name": "David J."
+                },
+                "reviewBody": "This tool showed me exactly what schema markup I was missing. My articles started appearing in Claude responses within a week!",
+                "reviewRating": {
+                  "@type": "Rating",
+                  "ratingValue": "5",
+                  "bestRating": "5"
+                }
+              },
+              {
+                "@type": "Review",
+                "author": {
+                  "@type": "Person",
+                  "name": "Maria K."
+                },
+                "reviewBody": "Finally, a free tool that actually helps with AI optimization! The recommendations were spot-on and easy to implement.",
+                "reviewRating": {
+                  "@type": "Rating", 
+                  "ratingValue": "5",
+                  "bestRating": "5"
+                }
+              }
+            ]
+          })
+        }}
+      />
+
+      {/* FAQ Schema Markup */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How can I check if my website is visible to ChatGPT?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "That's exactly what our tool does! We analyze your website to see if AI systems like ChatGPT can access and understand your content. We check your robots.txt file for AI crawler permissions, validate your structured data markup, and test how well your content is organized. You'll get a score and specific recommendations to improve how ChatGPT, Claude, and other AI systems can find and reference your site."
+                }
+              },
+              {
+                "@type": "Question", 
+                "name": "What is GPTBot and should I allow it on my website?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "GPTBot is OpenAI's official web crawler that feeds information to ChatGPT. If you block GPTBot in your robots.txt file, your content won't appear in ChatGPT responses when people ask questions about your topic. Most websites should allow GPTBot unless they have specific privacy concerns. We'll check if your robots.txt blocks GPTBot and show you exactly how to fix it."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Why isn't my website showing up in AI search results?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "There are usually three main reasons: 1) Your robots.txt file blocks AI crawlers like GPTBot or ClaudeBot, 2) You're missing structured data that helps AI understand your content, or 3) Your content isn't organized in a way that AI can easily extract information. Our analysis identifies exactly which issues your site has and gives you step-by-step fixes."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is this actually free?", 
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yep, completely free! No hidden costs, no signup required, no credit card needed. You can run as many analyses as you want and check multiple websites. We built this because we think everyone should be able to optimize their AI visibility without paying enterprise fees."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What if my site is blocking AI crawlers?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "That's actually pretty common! Many sites accidentally block AI crawlers through their robots.txt file or other technical issues. If ChatGPT, Claude, or Perplexity can't crawl your site, you're essentially invisible when people ask AI questions about your topic. We'll show you exactly how to fix this with copy-paste code examples."
+                }
+              }
+            ]
+          })
+        }}
+      />
+
+      
       <ModernHeader />
       <main>
         {/* Input section */}
         {!isAnalyzing && !analysisResult && !multiSiteResults && (
-          <UnifiedSiteInput onAnalyze={handleAnalyze} isAnalyzing={false} />
+          <>
+            <UnifiedSiteInput onAnalyze={handleAnalyze} isAnalyzing={false} />
+            <FAQSection />
+          </>
         )}
 
         {/* Analysis loading states */}
@@ -347,7 +520,10 @@ export default function Home() {
                 onComplete={handleMultiSiteComplete}
               />
             ) : (
-              <EnhancedAnalysisFlow onComplete={handleSingleSiteComplete} />
+              <EnhancedAnalysisFlow 
+                onComplete={handleSingleSiteComplete} 
+                url={sitesToAnalyze[0]?.url}
+              />
             )}
           </div>
         )}

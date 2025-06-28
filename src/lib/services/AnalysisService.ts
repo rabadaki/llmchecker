@@ -436,25 +436,149 @@ export class AnalysisService {
 
   private scoreSchemaMarkup($: any): number {
     const schemaCount = $('script[type="application/ld+json"]').length;
+    console.log('Schema markup count:', schemaCount);
     if (schemaCount === 0) return 0; // No structured data
     return Math.min(100, schemaCount * 25 + 25);
   }
 
   private validateSchemas($: any): number {
-    // Simplified validation - just check if JSON-LD exists and is valid JSON
-    let validSchemas = 0;
     let totalSchemas = 0;
+    let validSchemas = 0;
+    let score = 0;
+
     $('script[type="application/ld+json"]').each((_, element) => {
       totalSchemas++;
       try {
-        JSON.parse($(element).html() || '');
-        validSchemas++;
+        const jsonContent = $(element).html() || '';
+        const data = JSON.parse(jsonContent);
+        
+        // Basic JSON-LD validation
+        const validation = this.validateJsonLdSchema(data);
+        
+        if (validation.isValid) {
+          validSchemas++;
+          score += validation.score;
+        }
       } catch {
-        // Invalid JSON
+        // Invalid JSON - contributes to total but not valid count
       }
     });
+
     if (totalSchemas === 0) return 0; // No schemas to validate
-    return Math.min(100, validSchemas * 30 + 40);
+    
+    // Calculate final score: base validity score + completeness bonus
+    const validityRatio = validSchemas / totalSchemas;
+    const averageScore = validSchemas > 0 ? score / validSchemas : 0;
+    
+    return Math.round(Math.min(100, (validityRatio * 60) + (averageScore * 0.4)));
+  }
+
+  private validateJsonLdSchema(data: any): { isValid: boolean; score: number; issues: string[] } {
+    const issues: string[] = [];
+    let score = 0;
+
+    // Check for required JSON-LD properties
+    if (!data['@context']) {
+      issues.push('Missing @context property');
+    } else {
+      score += 20; // Has context
+    }
+
+    if (!data['@type']) {
+      issues.push('Missing @type property');
+    } else {
+      score += 20; // Has type
+      
+      // Type-specific validation
+      const typeScore = this.validateSchemaType(data, data['@type']);
+      score += typeScore;
+    }
+
+    // Check for common required properties based on schema type
+    if (data['@type']) {
+      const requiredFields = this.getRequiredFieldsForType(data['@type']);
+      const presentFields = requiredFields.filter(field => data[field] !== undefined);
+      const fieldCompleteness = presentFields.length / Math.max(requiredFields.length, 1);
+      score += Math.round(fieldCompleteness * 30); // Up to 30 points for required fields
+    }
+
+    // Bonus points for rich properties
+    const richProperties = ['image', 'author', 'datePublished', 'dateModified', 'description', 'url'];
+    const presentRichProps = richProperties.filter(prop => data[prop] !== undefined);
+    score += Math.min(10, presentRichProps.length * 2); // Up to 10 bonus points
+
+    const isValid = issues.length === 0 && score >= 40;
+    return { isValid, score: Math.min(100, score), issues };
+  }
+
+  private validateSchemaType(data: any, type: string): number {
+    let score = 0;
+    
+    switch (type) {
+      case 'Article':
+      case 'BlogPosting':
+      case 'NewsArticle':
+        if (data.headline) score += 5;
+        if (data.author) score += 5;
+        if (data.datePublished) score += 5;
+        if (data.image) score += 5;
+        break;
+        
+      case 'Organization':
+        if (data.name) score += 5;
+        if (data.url) score += 5;
+        if (data.logo) score += 5;
+        if (data.contactPoint || data.address) score += 5;
+        break;
+        
+      case 'WebSite':
+        if (data.name) score += 5;
+        if (data.url) score += 5;
+        if (data.description) score += 5;
+        if (data.potentialAction) score += 5;
+        break;
+        
+      case 'Product':
+        if (data.name) score += 5;
+        if (data.description) score += 5;
+        if (data.image) score += 5;
+        if (data.offers) score += 5;
+        break;
+        
+      case 'Person':
+        if (data.name) score += 5;
+        if (data.jobTitle || data.worksFor) score += 5;
+        if (data.image) score += 5;
+        if (data.url || data.sameAs) score += 5;
+        break;
+        
+      default:
+        // Generic validation for unknown types
+        if (data.name) score += 3;
+        if (data.description) score += 3;
+        if (data.url) score += 2;
+        if (data.image) score += 2;
+        break;
+    }
+    
+    return Math.min(20, score); // Cap type-specific score at 20
+  }
+
+  private getRequiredFieldsForType(type: string): string[] {
+    const requiredFields: Record<string, string[]> = {
+      'Article': ['headline', 'author'],
+      'BlogPosting': ['headline', 'author'],
+      'NewsArticle': ['headline', 'author', 'datePublished'],
+      'Organization': ['name'],
+      'WebSite': ['name', 'url'],
+      'Product': ['name', 'offers'],
+      'Person': ['name'],
+      'Event': ['name', 'startDate'],
+      'Review': ['reviewBody', 'author'],
+      'Recipe': ['name', 'recipeIngredient', 'recipeInstructions']
+    };
+    
+    return requiredFields[type] || ['name']; // Default to requiring 'name'
   }
 
   private checkRichResults($: any): number {

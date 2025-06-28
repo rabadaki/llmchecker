@@ -1,0 +1,50 @@
+# Robots.txt for AI Visibility Optimization
+# Allow all major AI crawlers to access content
+
+# OpenAI Crawlers (ChatGPT)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic Crawlers (Claude)
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+# Perplexity AI Crawlers
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Google AI/Bard
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bard
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+# Bing AI
+User-agent: Bingbot
+Allow: /
+
+# Standard Search Engine Crawlers
+User-agent: *
+Allow: /
+
+# Sitemap Location
+Sitemap: https://amivisibleonai.vercel.app/sitemap.xml
+
+# Crawl-delay to be respectful to servers
+Crawl-delay: 1

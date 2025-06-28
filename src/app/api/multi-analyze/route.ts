@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { MultiSiteAnalysisService } from '../../../lib/services/MultiSiteAnalysisService';
-import { MultiSiteAnalysisRequest } from '../../../lib/types/analysis';
+import { MultiSiteAnalysisRequest, MultiSiteAnalysisResponse } from '../../../lib/types/analysis';
 import { logger } from '../../../lib/utils/logger';
 
 const multiSiteAnalysisService = new MultiSiteAnalysisService();
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Set default values
+    // Set default values with lower limits for serverless
     const analysisRequest: MultiSiteAnalysisRequest = {
       inputUrl: body.inputUrl,
       discoveryEnabled: body.discoveryEnabled ?? true,
@@ -30,14 +30,19 @@ export async function POST(request: NextRequest) {
       analysisOptions: {
         includeSubdomains: body.analysisOptions?.includeSubdomains ?? true,
         includePaths: body.analysisOptions?.includePaths ?? true,
-        maxSites: body.analysisOptions?.maxSites ?? 10
+        maxSites: Math.min(body.analysisOptions?.maxSites ?? 5, 5) // Limit to 5 for serverless
       }
     };
 
     logger.info(`Multi-site analysis request received for: ${analysisRequest.inputUrl}`);
 
-    // Perform multi-site analysis
-    const result = await multiSiteAnalysisService.analyzeMultipleSites(analysisRequest);
+    // Add timeout wrapper for Vercel (50 seconds to stay under 60s limit)
+    const analysisPromise = multiSiteAnalysisService.analyzeMultipleSites(analysisRequest);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Analysis timeout after 50 seconds')), 50000)
+    );
+
+    const result = await Promise.race([analysisPromise, timeoutPromise]) as MultiSiteAnalysisResponse;
 
     logger.info(`Multi-site analysis completed for ${analysisRequest.inputUrl}: ${result.analyses.length} sites analyzed, average score: ${result.summary.averageScore}`);
 
@@ -46,12 +51,17 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     logger.error('Multi-site analysis failed:', error);
     
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const isTimeout = errorMessage.includes('timeout');
+    
     return NextResponse.json(
       { 
-        error: 'Analysis failed', 
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: isTimeout ? 'Analysis timeout - try analyzing fewer sites' : 'Analysis failed', 
+        details: errorMessage,
+        retryable: !isTimeout,
+        suggestion: isTimeout ? 'Try reducing the number of sites or disable discovery' : undefined
       },
-      { status: 500 }
+      { status: isTimeout ? 408 : 500 }
     );
   }
 }

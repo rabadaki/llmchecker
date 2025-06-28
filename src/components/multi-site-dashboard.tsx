@@ -267,17 +267,27 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
     window.open(`mailto:?subject=${subject}&body=${body}`)
   }
 
-  // Helper to get structured data score from categories
+  // Helper to get structured data bonus (only shows bonus for high scores)
   const getStructuredDataScore = (site) => {
+    let structuredDataScore = 0;
+    
     // Check if categories is an object with structuredData property
     if (site.categories && typeof site.categories === 'object' && 'structuredData' in site.categories) {
-      return site.categories.structuredData || 0;
+      structuredDataScore = site.categories.structuredData || 0;
     }
     // Fallback: if categories is an array (legacy format)
-    if (Array.isArray(site.categories)) {
+    else if (Array.isArray(site.categories)) {
       const cat = site.categories.find(cat => cat.id === 'structured_data');
-      return cat ? cat.score : 0;
+      structuredDataScore = cat ? cat.score : 0;
     }
+    
+    // Only return a bonus if the structured data score is above 70 (indicating good implementation)
+    // The bonus represents the extra value from having structured data
+    if (structuredDataScore >= 70) {
+      // Calculate bonus as percentage above baseline (50 is average)
+      return Math.round((structuredDataScore - 50) / 2);
+    }
+    
     return 0;
   };
 
