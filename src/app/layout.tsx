@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://amivisibleonai.vercel.app'),
   title: "Free AI SEO Tool - Check Your Website's AI Visibility | Am I Visible on AI",
   description: "Free AI SEO tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI can find your website. Get instant schema markup analysis & optimization tips. 100% free.",
   keywords: "AI SEO tool, free AI SEO, robots.txt checker, AI visibility, ChatGPT SEO, Claude search, Perplexity optimization, AI crawler analysis, schema markup checker, AI search optimization, LLM visibility, free SEO tool",
@@ -120,6 +123,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {GA_MEASUREMENT_ID && <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />}
         {children}
       </body>
     </html>

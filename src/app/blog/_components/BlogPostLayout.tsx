@@ -6,6 +6,7 @@ interface BlogPostMeta {
   date: string;
   image?: string;
   url?: string;
+  dateModified?: string;
 }
 
 interface BlogPostLayoutProps {
@@ -14,6 +15,18 @@ interface BlogPostLayoutProps {
 }
 
 export default function BlogPostLayout({ children, meta }: BlogPostLayoutProps) {
+  const published = new Date(meta.date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const updated = meta.dateModified
+    ? new Date(meta.dateModified).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
   return (
     <>
       {/* Article schema for SEO/AI visibility */}
@@ -26,6 +39,7 @@ export default function BlogPostLayout({ children, meta }: BlogPostLayoutProps) 
             "headline": meta.title,
             "description": meta.description,
             "datePublished": meta.date,
+            ...(meta.dateModified && { "dateModified": meta.dateModified }),
             "author": {
               "@type": "Organization",
               "name": "Am I Visible on AI"
@@ -45,13 +59,15 @@ export default function BlogPostLayout({ children, meta }: BlogPostLayoutProps) 
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">{meta.title}</h1>
             <p className="text-xl text-gray-600 mb-4 max-w-3xl mx-auto leading-relaxed">{meta.description}</p>
-            <time className="text-sm text-gray-500">
-              Published {new Date(meta.date).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </time>
+            <div className="text-sm text-gray-500">
+              Published {published}
+              {updated && (
+                <>
+                  <span className="mx-2">&bull;</span>
+                  Last updated: {updated}
+                </>
+              )}
+            </div>
           </header>
 
           {/* Divider */}

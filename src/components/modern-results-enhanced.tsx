@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Share2, Download, Target, Lightbulb, CheckCircle, AlertTriangle } from "lucide-react"
 import { ArrowRightIcon } from "@radix-ui/react-icons"
+import { trackShareResults, trackEmailReport, trackNewAnalysis } from "@/lib/analytics"
 
 interface ModernResultsEnhancedProps {
   result: any
@@ -414,16 +415,25 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
       <div className="sticky bottom-0 bg-white border-t border-gray-200 shadow-lg">
         <div className="container mx-auto px-6 py-4">
           <div className="flex flex-wrap justify-center gap-3">
-            <Button variant="outline" className="border-gray-300 text-gray-700 bg-transparent">
+            <Button 
+              onClick={() => trackShareResults('single_site_share')}
+              variant="outline" 
+              className="border-gray-300 text-gray-700 bg-transparent"
+            >
               <Share2 className="w-4 h-4 mr-2" />
               Share Results
             </Button>
-            <Button variant="outline" className="border-gray-300 text-gray-700 bg-transparent">
+            <Button 
+              onClick={() => trackEmailReport()}
+              variant="outline" 
+              className="border-gray-300 text-gray-700 bg-transparent"
+            >
               <Download className="w-4 h-4 mr-2" />
               Email Report
             </Button>
             <Button 
               onClick={() => {
+                trackNewAnalysis()
                 onReset()
                 window.scrollTo({ top: 0, behavior: "smooth" })
               }}

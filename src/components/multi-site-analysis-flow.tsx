@@ -204,9 +204,6 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
               <span className="text-lg font-semibold text-gray-900">Overall Progress</span>
               <div className="flex items-center gap-4">
                 <span className="text-2xl font-bold text-purple-600">{Math.round(overallProgress)}%</span>
-                <Badge variant="outline">
-                  {completedCount}/{analyzingSites.length} completed
-                </Badge>
               </div>
             </div>
             <Progress value={overallProgress} className="h-3 mb-2" />

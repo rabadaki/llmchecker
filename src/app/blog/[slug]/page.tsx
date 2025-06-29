@@ -3,6 +3,10 @@ import { ModernHeader } from "@/components/modern-header";
 import { postsMeta } from "../posts-meta";
 import { Metadata } from "next";
 
+// Import all MDX files statically
+import WhyAiVisibilityMatters2025 from "../why-ai-visibility-matters-2025.mdx";
+import AiContentMyths2025 from "../ai-content-myths-2025.mdx";
+
 interface BlogArticlePageProps {
   params: Promise<{ slug: string }>;
 }
@@ -43,6 +47,11 @@ export async function generateMetadata({ params }: BlogArticlePageProps): Promis
   };
 }
 
+const postComponents: Record<string, React.ComponentType> = {
+  "why-ai-visibility-matters-2025": WhyAiVisibilityMatters2025,
+  "ai-content-myths-2025": AiContentMyths2025,
+};
+
 export default async function BlogArticlePage({ params }: BlogArticlePageProps) {
   const { slug } = await params;
   
@@ -52,13 +61,10 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
     notFound();
   }
 
-  let Post;
-  try {
-    // Try importing the MDX file
-    const module = await import(`../${slug}.mdx`);
-    Post = module.default;
-  } catch (e) {
-    console.error(`Failed to import blog post: ${slug}`, e);
+  // Get the component for this slug
+  const Post = postComponents[slug];
+  if (!Post) {
+    console.error(`No component found for slug: ${slug}`);
     notFound();
   }
 

@@ -9,6 +9,7 @@ import { ModernResultsEnhanced } from "@/components/modern-results-enhanced"
 import { ModernHeader } from "@/components/modern-header"
 import { ScrollToResults } from "@/components/scroll-to-results"
 import { FAQSection } from "@/components/faq-section"
+import { trackAnalysisStart, trackAnalysisComplete } from "@/lib/analytics"
 import Head from "next/head"
 
 export interface AnalysisResult {
@@ -130,6 +131,8 @@ export default function Home() {
     // Store the original search term (first site's URL)
     if (sites.length > 0) {
       setOriginalSearchTerm(sites[0].url)
+      // Track analysis start
+      trackAnalysisStart(sites[0].url, sites.length > 1)
     }
     setIsAnalyzing(true)
   }
@@ -195,6 +198,9 @@ export default function Home() {
 
       setAnalysisResult(transformedResult);
       setIsAnalyzing(false);
+      
+      // Track analysis completion
+      trackAnalysisComplete(url, transformedResult.overallScore, false);
     } catch (error) {
       console.error('Single site analysis error:', error);
       setIsAnalyzing(false);
@@ -301,6 +307,14 @@ export default function Home() {
 
     setMultiSiteResults(transformedResults)
     setIsAnalyzing(false)
+    
+    // Track multi-site analysis completion
+    if (transformedResults.length > 0) {
+      const averageScore = Math.round(
+        transformedResults.reduce((sum, result) => sum + (result.overallScore || 0), 0) / transformedResults.length
+      );
+      trackAnalysisComplete(originalSearchTerm, averageScore, true);
+    }
     
     // Save results to database for sharing
     saveResultsToDatabase(transformedResults)

@@ -21,7 +21,7 @@ export function ModernHeader() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8" role="navigation" aria-label="Main navigation">
-            <a href="#analyzer-heading" className="text-sm text-gray-600 hover:text-gray-900">
+            <a href="/how-it-works" className="text-sm text-gray-600 hover:text-gray-900">
               How it works
             </a>
             <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900">
@@ -31,8 +31,9 @@ export function ModernHeader() {
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors">
-              Analyze your site
+            <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 sm:px-6 py-2 rounded-lg transition-colors">
+              <span className="sm:hidden">Analyze</span>
+              <span className="hidden sm:inline">Analyze your site</span>
             </a>
           </div>
         </div>

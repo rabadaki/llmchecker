@@ -23,6 +23,7 @@ import {
   ArrowDown
 } from "lucide-react"
 import { ArrowRightIcon, EnvelopeClosedIcon } from "@radix-ui/react-icons"
+import { trackShareResults, trackEmailReport, trackNewAnalysis } from "@/lib/analytics"
 import Head from "next/head"
 
 interface SiteResult {
@@ -239,6 +240,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
     console.log('📊 ShareUrl state:', shareUrl)
     
     if (navigator.share) {
+      trackShareResults('native_share')
       navigator.share({
         title: "Multi-Site LLM Discoverability Analysis",
         text: `Analysis of ${results.length} sites with average score of ${averageScore}/100`,
@@ -247,6 +249,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
     } else {
       try {
         await navigator.clipboard.writeText(urlToShare)
+        trackShareResults('link_copy')
         console.log('✅ Link copied to clipboard:', urlToShare)
         // You could add a toast notification here
         alert('Link copied to clipboard!')
@@ -261,6 +264,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
   }
 
   const handleEmail = () => {
+    trackEmailReport()
     const subject = encodeURIComponent("Multi-Site LLM Discoverability Analysis")
     const body = encodeURIComponent(
       `Multi-site analysis complete! Average score: ${averageScore}/100 across ${results.length} sites.`,
@@ -339,13 +343,13 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
           </div>
 
           {/* Performance Matrix */}
-          <Card className="p-8 mb-12">
-            <div className="flex items-center justify-between mb-6">
+          <Card className="p-4 sm:p-8 mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
               <div className="flex items-center gap-3">
                 <BarChart3 className="w-6 h-6 text-gray-600" />
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Performance Matrix</h2>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Performance Matrix</h2>
               </div>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="hidden sm:flex items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-100 border border-red-200 rounded"></div>
                   <span>Poor (0-44)</span>
@@ -365,14 +369,21 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
               </div>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[600px]">
+                <colgroup>
+                  <col className="w-[27%]" />
+                  <col className="w-[12%]" />
+                  <col className="w-[20%]" />
+                  <col className="w-[20%]" />
+                  <col className="w-[21%]" />
+                </colgroup>
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-semibold">Site</th>
-                    <th className="text-center py-3 px-4 font-semibold">AI Access Control</th>
-                    <th className="text-center py-3 px-4 font-semibold">Content Structure</th>
-                    <th className="text-center py-3 px-4 font-semibold">Technical Infrastructure</th>
-                    <th className="text-center py-3 px-4 font-semibold">Overall Score</th>
+                    <th className="text-left py-3 px-1 sm:px-4 font-semibold text-xs sm:text-sm sticky left-0 bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Site</th>
+                    <th className="text-center py-3 px-0 sm:px-1 font-semibold text-xs sm:text-sm">Score</th>
+                    <th className="text-center py-3 px-1 sm:px-4 font-semibold text-xs sm:text-sm">AI Access</th>
+                    <th className="text-center py-3 px-1 sm:px-4 font-semibold text-xs sm:text-sm">Content</th>
+                    <th className="text-center py-3 px-1 sm:px-4 font-semibold text-xs sm:text-sm">Technical</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -380,48 +391,27 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                     .sort((a, b) => b.overallScore - a.overallScore) // Sort by overall score, highest first
                     .map((site, index) => (
                       <tr key={`${site.url}-${index}`} className="border-b hover:bg-gray-50">
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
-                            {React.createElement(siteTypeIcons[site.type] || Globe, { className: "w-4 h-4 text-gray-600" })}
-                            <div>
-                              <span className="font-medium text-gray-900">{site.title}</span>
-                              <p className="text-xs text-gray-500">
+                        <td className="py-1.5 sm:py-3 px-1 sm:px-4 sticky left-0 bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                          <div className="flex items-center gap-1 sm:gap-3">
+                            {React.createElement(siteTypeIcons[site.type] || Globe, { className: "w-3 sm:w-4 h-3 sm:h-4 text-gray-600" })}
+                            <div className="min-w-0 w-32 sm:flex-1">
+                              <div className="font-medium text-gray-900 text-xs sm:text-sm truncate">{site.title}</div>
+                              <p className="text-xs text-gray-500 truncate max-w-[180px] sm:max-w-none">
                                 {site.url}
                               </p>
                             </div>
                           </div>
                         </td>
-                        <td className="text-center py-3 px-4">
-                          <div
-                            className={`inline-flex items-center justify-center w-12 h-8 rounded text-sm font-medium ${getScoreBg(site.categories.aiAccess)} ${getScoreColor(site.categories.aiAccess)}`}
-                          >
-                            {site.categories.aiAccess}
-                          </div>
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <div
-                            className={`inline-flex items-center justify-center w-12 h-8 rounded text-sm font-medium ${getScoreBg(site.categories.contentStructure)} ${getScoreColor(site.categories.contentStructure)}`}
-                          >
-                            {site.categories.contentStructure}
-                          </div>
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <div
-                            className={`inline-flex items-center justify-center w-12 h-8 rounded text-sm font-medium ${getScoreBg(site.categories.technicalInfra)} ${getScoreColor(site.categories.technicalInfra)}`}
-                          >
-                            {site.categories.technicalInfra}
-                          </div>
-                        </td>
-                        <td className="text-center py-3 px-4">
+                        <td className="text-center py-1.5 sm:py-3 px-0 sm:px-1">
                           <div className="flex items-center justify-center gap-1">
                             <div
-                              className={`inline-flex items-center justify-center w-12 h-8 rounded text-sm font-bold ${getScoreBg(site.overallScore)} ${getScoreColor(site.overallScore)}`}
+                              className={`inline-flex items-center justify-center w-10 sm:w-12 h-7 sm:h-8 rounded text-sm sm:text-sm font-bold ${getScoreBg(site.overallScore)} ${getScoreColor(site.overallScore)}`}
                             >
                               {site.overallScore}
                             </div>
                             {getStructuredDataScore(site) > 0 && (
                               <span 
-                                className="text-yellow-500 text-sm cursor-help relative group"
+                                className="text-yellow-500 text-xs sm:text-sm cursor-help relative group"
                                 title={`Structured Data Bonus: +${getStructuredDataScore(site)} points`}
                               >
                                 ⭐
@@ -430,6 +420,27 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                                 </div>
                               </span>
                             )}
+                          </div>
+                        </td>
+                        <td className="text-center py-1.5 sm:py-3 px-0.5 sm:px-4">
+                          <div
+                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories.aiAccess)} ${getScoreColor(site.categories.aiAccess)}`}
+                          >
+                            {site.categories.aiAccess}
+                          </div>
+                        </td>
+                        <td className="text-center py-1.5 sm:py-3 px-0.5 sm:px-4">
+                          <div
+                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories.contentStructure)} ${getScoreColor(site.categories.contentStructure)}`}
+                          >
+                            {site.categories.contentStructure}
+                          </div>
+                        </td>
+                        <td className="text-center py-1.5 sm:py-3 px-0.5 sm:px-4">
+                          <div
+                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories.technicalInfra)} ${getScoreColor(site.categories.technicalInfra)}`}
+                          >
+                            {site.categories.technicalInfra}
                           </div>
                         </td>
                       </tr>
@@ -503,39 +514,39 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
           </div>
 
           {/* Recommendations */}
-          <Card className="p-8">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-green-50">
-                  <Target className="w-8 h-8 text-green-600" />
+          <Card className="p-4 sm:p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 sm:mb-8 gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="p-2 sm:p-3 rounded-xl bg-green-50">
+                  <Target className="w-6 sm:w-8 h-6 sm:h-8 text-green-600" />
                 </div>
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Recommendations</h2>
-                  <p className="text-gray-600">All improvements ranked by impact and effort across your sites</p>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">Recommendations</h2>
+                  <p className="text-sm sm:text-base text-gray-600">All improvements ranked by impact and effort across your sites</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                 {/* Sort Button */}
                 <button
                   onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md transition-colors"
+                  className="flex items-center justify-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md transition-colors w-full sm:w-auto"
                   title={`Sort ${sortOrder === 'desc' ? 'ascending' : 'descending'}`}
                 >
                   <span>Sort:</span>
                   {sortOrder === 'desc' ? (
-                    <ArrowDown className="w-4 h-4" />
+                    <ArrowDown className="w-3 sm:w-4 h-3 sm:h-4" />
                   ) : (
-                    <ArrowUp className="w-4 h-4" />
+                    <ArrowUp className="w-3 sm:w-4 h-3 sm:h-4" />
                   )}
-                  {viewMode === 'by-page' ? 'Score' : 'Impact'}
+                  <span className="hidden sm:inline">{viewMode === 'by-page' ? 'Score' : 'Impact'}</span>
                 </button>
                 
                 {/* View Mode Toggle */}
-                <div className="flex bg-gray-100 rounded-lg p-1">
+                <div className="flex bg-gray-100 rounded-lg p-1 w-full sm:w-auto">
                   <button
                     onClick={() => setViewMode('grouped')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors ${
                       viewMode === 'grouped'
                         ? 'bg-white text-gray-900 shadow-sm'
                         : 'text-gray-600 hover:text-gray-900'
@@ -545,7 +556,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                   </button>
                   <button
                     onClick={() => setViewMode('by-page')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors ${
                       viewMode === 'by-page'
                         ? 'bg-white text-gray-900 shadow-sm'
                         : 'text-gray-600 hover:text-gray-900'
@@ -557,22 +568,22 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="text-center p-4 bg-red-50 rounded-lg">
-                <div className="text-2xl font-bold text-red-600 mb-1">
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
+              <div className="text-center p-3 sm:p-4 bg-red-50 rounded-lg">
+                <div className="text-lg sm:text-2xl font-bold text-red-600 mb-1">
                   {groupedRecommendations.filter((r) => r.impact === "high").length}
                 </div>
-                <p className="text-sm text-red-700">High Impact</p>
+                <p className="text-xs sm:text-sm text-red-700">High Impact</p>
               </div>
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600 mb-1">
+              <div className="text-center p-3 sm:p-4 bg-orange-50 rounded-lg">
+                <div className="text-lg sm:text-2xl font-bold text-orange-600 mb-1">
                   {groupedRecommendations.filter((r) => r.effort === "easy").length}
                 </div>
-                <p className="text-sm text-orange-700">Quick Wins</p>
+                <p className="text-xs sm:text-sm text-orange-700">Quick Wins</p>
               </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600 mb-1">{groupedRecommendations.length}</div>
-                <p className="text-sm text-blue-700">Unique Improvements</p>
+              <div className="text-center p-3 sm:p-4 bg-blue-50 rounded-lg">
+                <div className="text-lg sm:text-2xl font-bold text-blue-600 mb-1">{groupedRecommendations.length}</div>
+                <p className="text-xs sm:text-sm text-blue-700">Unique Improvements</p>
               </div>
             </div>
 
@@ -584,12 +595,12 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                   return (
                     <div
                       key={rec.title}
-                      className="border border-gray-200 rounded-xl p-6 hover:border-green-300 hover:bg-green-50/30 transition-all cursor-pointer group"
+                      className="border border-gray-200 rounded-xl p-4 sm:p-6 hover:border-green-300 hover:bg-green-50/30 transition-all cursor-pointer group"
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-start gap-4">
+                      <div className="flex items-start justify-between mb-3 sm:mb-4">
+                        <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
                           <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white ${
+                            className={`w-8 sm:w-10 h-8 sm:h-10 rounded-xl flex items-center justify-center font-bold text-white text-sm sm:text-base ${
                               rec.impact === "high"
                                 ? "bg-red-500"
                                 : rec.impact === "medium"
@@ -599,11 +610,11 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                           >
                             {index + 1}
                           </div>
-                          <div className="flex-1">
-                            <h4 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-green-700 transition-colors">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 group-hover:text-green-700 transition-colors">
                               {rec.title}
                             </h4>
-                            <div className="flex items-center gap-2 mb-3">
+                            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-3">
                               <Badge variant="outline" className="text-xs">
                                 {rec.category}
                               </Badge>
@@ -611,18 +622,19 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                                 variant={
                                   rec.impact === "high" ? "destructive" : rec.impact === "medium" ? "default" : "secondary"
                                 }
+                                className="text-xs"
                               >
                                 {rec.impact.charAt(0).toUpperCase() + rec.impact.slice(1)} impact
                               </Badge>
-                              <Badge variant="outline">{rec.effort.charAt(0).toUpperCase() + rec.effort.slice(1)} effort</Badge>
+                              <Badge variant="outline" className="text-xs">{rec.effort.charAt(0).toUpperCase() + rec.effort.slice(1)} effort</Badge>
                             </div>
                             
                             {/* Show affected sites */}
                             <div className="space-y-2">
-                              <p className="text-sm font-medium text-gray-700">
+                              <p className="text-xs sm:text-sm font-medium text-gray-700">
                                 Affects {rec.sites.length} page{rec.sites.length > 1 ? 's' : ''}:
                               </p>
-                              <div className="flex flex-wrap gap-2">
+                              <div className="flex flex-wrap gap-1 sm:gap-2">
                                 {rec.sites.map((site, siteIndex) => {
                                   const Icon = siteTypeIcons[site.siteType] || Globe;
                                   return (
@@ -632,7 +644,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                                       title={site.siteUrl}
                                     >
                                       <Icon className="w-3 h-3 text-gray-600" />
-                                      <span className="text-xs text-gray-700">{site.siteName}</span>
+                                      <span className="text-xs text-gray-700 truncate max-w-[80px] sm:max-w-none">{site.siteName}</span>
                                       {/* Custom tooltip */}
                                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/badge:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
                                         {site.siteUrl}
@@ -644,7 +656,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                             </div>
                           </div>
                         </div>
-                        <ArrowRightIcon className="w-5 h-5 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                        <ArrowRightIcon className="w-4 sm:w-5 h-4 sm:h-5 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0" />
                       </div>
                     </div>
                   )
@@ -663,19 +675,19 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                     >
                       {/* Page Header - Clickable */}
                       <div 
-                        className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                        className="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors"
                         onClick={() => togglePageExpansion(pageData.siteUrl)}
                       >
-                        <div className="flex items-center gap-3">
-                          <Icon className="w-5 h-5 text-gray-600" />
-                          <div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-3">{pageData.siteName}</h3>
-                            <p className="text-sm text-gray-500">{pageData.siteUrl}</p>
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                          <Icon className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600 flex-shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1 sm:mb-3 truncate">{pageData.siteName}</h3>
+                            <p className="text-xs sm:text-sm text-gray-500 truncate">{pageData.siteUrl}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                           {/* Score Badge */}
-                          <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                          <div className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${
                             pageData.overallScore >= 80 ? 'bg-green-100 text-green-800' :
                             pageData.overallScore >= 65 ? 'bg-blue-100 text-blue-800' :
                             pageData.overallScore >= 45 ? 'bg-orange-100 text-orange-800' :
@@ -684,31 +696,31 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                             {pageData.overallScore}/100
                           </div>
                           
-                          {/* Recommendations Count */}
-                          <div className="text-sm text-gray-600">
+                          {/* Recommendations Count - Hidden on very small screens */}
+                          <div className="hidden sm:block text-sm text-gray-600">
                             {pageData.recommendations.length} recommendation{pageData.recommendations.length > 1 ? 's' : ''}
                           </div>
                           
                           {/* Expand/Collapse Icon */}
                           {isExpanded ? (
-                            <ChevronUp className="w-5 h-5 text-gray-400" />
+                            <ChevronUp className="w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
                           ) : (
-                            <ChevronDown className="w-5 h-5 text-gray-400" />
+                            <ChevronDown className="w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
                           )}
                         </div>
                       </div>
 
                       {/* Collapsible Recommendations Content */}
                       {isExpanded && (
-                        <div className="px-6 pb-6 border-t border-gray-100">
+                        <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-100">
                           <div className="space-y-3 mt-4">
                             {pageData.recommendations.map((rec, recIndex) => (
                               <div
                                 key={`${pageData.siteUrl}-${rec.title}-${recIndex}`}
-                                className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                className="flex items-start gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                               >
                                 <div
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                                  className={`w-5 sm:w-6 h-5 sm:h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
                                     rec.impact === "high"
                                       ? "bg-red-500"
                                       : rec.impact === "medium"
@@ -718,9 +730,9 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                                 >
                                   {recIndex + 1}
                                 </div>
-                                <div className="flex-1">
-                                  <p className="font-medium text-gray-900 mb-1">{rec.title}</p>
-                                  <div className="flex items-center gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-medium text-gray-900 mb-1 text-sm sm:text-base">{rec.title}</p>
+                                  <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                                     <Badge variant="outline" className="text-xs">
                                       {rec.category}
                                     </Badge>
@@ -764,7 +776,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                 <EnvelopeClosedIcon className="w-4 h-4 mr-2" />
                 Email Report
               </Button>
-              <Button onClick={onReset} className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button onClick={() => { trackNewAnalysis(); onReset(); }} className="bg-blue-600 hover:bg-blue-700 text-white">
                 <ArrowRightIcon className="w-4 h-4 mr-2" />
                 Analyze More Sites
               </Button>

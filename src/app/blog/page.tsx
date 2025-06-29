@@ -4,17 +4,17 @@ import { postsMeta } from "./posts-meta";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI SEO Blog – AI Visibility Tips & News",
+  title: "AI Visibility Insights – Tips & News for Getting Found by AI",
   description: "Read the latest on AI SEO, AI visibility, and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
   alternates: {
     types: {
       "application/rss+xml": [
-        { url: "https://amivisibleonai.vercel.app/blog/rss.xml", title: "AI SEO Blog RSS Feed" },
+        { url: "https://amivisibleonai.vercel.app/blog/rss.xml", title: "AI Visibility Insights RSS Feed" },
       ],
     },
   },
   openGraph: {
-    title: "AI SEO Blog – AI Visibility Tips & News",
+    title: "AI Visibility Insights – Tips & News for Getting Found by AI",
     description: "Read the latest on AI SEO, AI visibility, and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
     images: ["https://amivisibleonai.vercel.app/og-image.png"],
     url: "https://amivisibleonai.vercel.app/blog",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI SEO Blog – AI Visibility Tips & News",
+    title: "AI Visibility Insights – Tips & News for Getting Found by AI",
     description: "Read the latest on AI SEO, AI visibility, and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
     images: ["https://amivisibleonai.vercel.app/og-image.png"],
   },
@@ -37,7 +37,7 @@ export default function BlogIndex() {
       <div className="min-h-screen bg-gray-50 pb-16">
         {/* Hero Section */}
         <section className="max-w-3xl mx-auto pt-16 pb-8 px-4 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-gray-900">AI SEO Blog</h1>
+          <h1 className="text-4xl font-bold mb-3 text-gray-900">AI Visibility Insights</h1>
           <p className="text-lg text-gray-600 mb-2">Tips, news, and strategies for getting found by AI in 2025</p>
         </section>
         {/* Blog Post Cards */}
@@ -53,7 +53,15 @@ export default function BlogIndex() {
                     </div>
                     <h2 className="text-xl font-bold text-gray-900 group-hover:underline">{post.title}</h2>
                     <p className="text-gray-600">{post.description}</p>
-                    <span className="text-xs text-gray-400 mt-2">Published: {new Date(post.date).toLocaleString('en-US', { month: 'short', year: 'numeric' })}</span>
+                    <span className="text-xs text-gray-400 mt-2">
+                      Published: {new Date(post.date).toLocaleString('en-US', { month: 'short', year: 'numeric' })}
+                      {post.dateModified && (
+                        <>
+                          <span className="mx-1">&bull;</span>
+                          Last updated: {new Date(post.dateModified).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </>
+                      )}
+                    </span>
                   </div>
                 </Link>
               </li>
