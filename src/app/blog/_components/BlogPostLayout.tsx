@@ -54,9 +54,14 @@ export default function BlogPostLayout({ children, meta }: BlogPostLayoutProps) 
             </time>
           </header>
 
+          {/* Divider */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <hr className="border-t border-gray-300" />
+          </div>
+
           {/* Article Content */}
-          <article className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="prose prose-lg prose-gray max-w-none p-8 md:p-12">
+          <article>
+            <div className="prose prose-lg prose-gray max-w-none mx-auto">
               {children}
             </div>
           </article>
