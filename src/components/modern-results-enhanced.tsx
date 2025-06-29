@@ -28,13 +28,20 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
     return 'Homepage';
   };
 
-  // Helper to get structured data bonus (consistent with multi-site)
+  // Helper to get structured data bonus (consistent with backend scoring)
   const getStructuredDataScore = () => {
-    const structuredDataScore = result.categories?.structuredData?.score || 0;
-    if (structuredDataScore >= 70) {
-      return Math.round((structuredDataScore - 50) / 2);
-    }
-    return 0;
+    // Try different possible locations for structured data score
+    const structuredDataScore = result.categories?.structured_data?.score || 
+                               result.categories?.structuredData?.score ||
+                               result.categories?.find?.(c => c.id === 'structured_data')?.score || 
+                               0;
+    
+    // Use same formula as backend: (score/100) * 10
+    // Max bonus is +10 points
+    const bonusPoints = Math.round((structuredDataScore / 100) * 10);
+    
+    // Only show bonus if it's meaningful (at least +1 point)
+    return bonusPoints >= 1 ? bonusPoints : 0;
   };
 
   // Generate recommendations using memoized service

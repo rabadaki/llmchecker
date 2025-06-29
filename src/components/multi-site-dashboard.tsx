@@ -283,7 +283,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
     window.open(`mailto:?subject=${subject}&body=${body}`)
   }
 
-  // Helper to get structured data bonus (only shows bonus for high scores)
+  // Helper to get structured data bonus (consistent with backend scoring)
   const getStructuredDataScore = (site: any) => {
     let structuredDataScore = 0;
     
@@ -297,14 +297,12 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
       structuredDataScore = cat ? cat.score : 0;
     }
     
-    // Only return a bonus if the structured data score is above 70 (indicating good implementation)
-    // The bonus represents the extra value from having structured data
-    if (structuredDataScore >= 70) {
-      // Calculate bonus as percentage above baseline (50 is average)
-      return Math.round((structuredDataScore - 50) / 2);
-    }
+    // Use same formula as backend: (score/100) * 10
+    // Max bonus is +10 points
+    const bonusPoints = Math.round((structuredDataScore / 100) * 10);
     
-    return 0;
+    // Only show bonus if it's meaningful (at least +1 point)
+    return bonusPoints >= 1 ? bonusPoints : 0;
   };
 
   return (
