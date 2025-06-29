@@ -287,16 +287,26 @@ export class AnalysisService {
 
   private generateRecommendations(checks: CheckResult[]): string[] {
     // Use new centralized recommendation service for legacy compatibility
-    const { recommendationService } = require('./RecommendationService');
-    
-    // Convert checks to simple analysis format for recommendation service
-    const mockAnalysis = {
-      categories: [{
-        checks: checks.filter(check => check.score < 80) // Only checks that need improvement
-      }]
-    };
-    
-    return recommendationService.getLegacyRecommendations(mockAnalysis);
+    try {
+      const { recommendationService } = require('./RecommendationService');
+      
+      // Convert checks to simple analysis format for recommendation service
+      const mockAnalysis = {
+        categories: [{
+          checks: checks.filter(check => check.score < 80) // Only checks that need improvement
+        }]
+      };
+      
+      return recommendationService.getLegacyRecommendations(mockAnalysis);
+    } catch (error) {
+      console.error('Failed to generate recommendations:', error);
+      
+      // Fallback to simple recommendations if service fails
+      return checks
+        .filter(check => check.score < 80)
+        .map(check => `Improve ${check.name} (currently ${check.score}/100)`)
+        .slice(0, 5); // Limit to 5 recommendations
+    }
   }
 
   private generateSummary(categories: CategoryResult[], overallScore: number): { strengths: string[]; improvements: string[]; priority: 'low' | 'medium' | 'high' } {

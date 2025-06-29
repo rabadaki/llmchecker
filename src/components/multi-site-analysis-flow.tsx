@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, Clock, AlertTriangle, Globe, FileText, Code, ShoppingCart } from "lucide-react"
+import { recommendationService } from "@/lib/services/RecommendationService"
 
 interface AnalyzingSite {
   url: string
@@ -69,50 +70,69 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
 
         const result = await response.json()
         
-        // Transform API result to match expected format
+        // Transform API result to match expected format with defensive programming
         const transformedResults = result.analyses.map((analysis: any, index: number) => {
-          // Extract scores from categories array
-          const categoriesObject: any = {};
-          analysis.categories.forEach((cat: any) => {
-            // Map category IDs to the expected property names
-            switch(cat.id) {
-              case 'crawlability_access':
-                categoriesObject.aiAccess = cat.score;
-                break;
-              case 'content_structure':
-                categoriesObject.contentStructure = cat.score;
-                break;
-              case 'technical_infrastructure':
-                categoriesObject.technicalInfra = cat.score;
-                break;
-              case 'structured_data':
-                categoriesObject.structuredData = cat.score;
-                break;
-            }
-          });
+          // Validate analysis structure
+          if (!analysis || !analysis.categories) {
+            console.warn('Invalid analysis structure:', analysis);
+            return null;
+          }
 
+          // Extract scores from categories array with defensive checks
+          const categoriesObject: any = {
+            aiAccess: 0,
+            contentStructure: 0,
+            technicalInfra: 0,
+            structuredData: 0
+          };
+          
+          if (Array.isArray(analysis.categories)) {
+            analysis.categories.forEach((cat: any) => {
+              if (!cat || typeof cat.score !== 'number') return;
+              
+              // Map category IDs to the expected property names
+              switch(cat.id) {
+                case 'crawlability_access':
+                  categoriesObject.aiAccess = cat.score;
+                  break;
+                case 'content_structure':
+                  categoriesObject.contentStructure = cat.score;
+                  break;
+                case 'technical_infrastructure':
+                  categoriesObject.technicalInfra = cat.score;
+                  break;
+                case 'structured_data':
+                  categoriesObject.structuredData = cat.score;
+                  break;
+              }
+            });
+          }
+
+          // Generate recommendations safely
+          let recommendations: any[] = [];
+          try {
+            const summary = recommendationService.generateSingleSiteRecommendations(analysis);
+            recommendations = recommendationService.formatForUI(summary.prioritized);
+          } catch (error) {
+            console.error('Failed to generate recommendations for', analysis.url, error);
+          }
 
           return {
-            url: analysis.url,
-            type: analysis.siteInfo.category,
-            title: sites[index]?.title || (analysis.siteInfo.url.includes('www.') ? 
+            url: analysis.url || '',
+            type: analysis.siteInfo?.category || 'homepage',
+            title: sites[index]?.title || (analysis.siteInfo?.url?.includes('www.') ? 
               new URL(analysis.siteInfo.url).hostname.replace('www.', '') : 
-              new URL(analysis.siteInfo.url).hostname),
-            overallScore: analysis.overallScore,
-            categories: categoriesObject, // Pass the transformed categories object
+              new URL(analysis.siteInfo?.url || analysis.url).hostname),
+            overallScore: analysis.overallScore || 0,
+            categories: categoriesObject,
             insights: [
-              `Score: ${analysis.overallScore}/100`,
-              `${analysis.categories.length} categories analyzed`,
-              `${analysis.categories.reduce((sum: number, cat: any) => sum + cat.recommendations.length, 0)} recommendations`
+              `Score: ${analysis.overallScore || 0}/100`,
+              `${Array.isArray(analysis.categories) ? analysis.categories.length : 0} categories analyzed`,
+              `${recommendations.length} recommendations`
             ],
-            recommendations: (() => {
-              // Use new centralized recommendation service
-              const { recommendationService } = require('@/lib/services/RecommendationService');
-              const summary = recommendationService.generateSingleSiteRecommendations(analysis);
-              return recommendationService.formatForUI(summary.prioritized);
-            })()
+            recommendations: recommendations as any[] // Type assertion to fix TS error
           };
-        });
+        }).filter(Boolean); // Remove any null results
 
         onComplete(transformedResults);
         

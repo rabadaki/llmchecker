@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { Share2, Download, Target, Lightbulb, CheckCircle, AlertTriangle } from "lucide-react"
 import { ArrowRightIcon } from "@radix-ui/react-icons"
 import { trackShareResults, trackEmailReport, trackNewAnalysis } from "@/lib/analytics"
+import { recommendationService } from "@/lib/services/RecommendationService"
 
 interface ModernResultsEnhancedProps {
   result: any
@@ -36,6 +37,18 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
     return 0;
   };
 
+  // Generate recommendations using memoized service
+  const recommendations = useMemo(() => {
+    try {
+      if (!result || !result.categories) return [];
+      const summary = recommendationService.generateSingleSiteRecommendations(result);
+      return recommendationService.formatForUI(summary.prioritized);
+    } catch (error) {
+      console.error('Failed to generate recommendations:', error);
+      return [];
+    }
+  }, [result]);
+
   // Transform the existing result data to match multi-site structure
   const siteResult = {
     url: result.url,
@@ -43,18 +56,21 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
     title: new URL(result.url).hostname.replace(/^www\./, ''),
     overallScore: result.overallScore,
     categories: {
-      aiAccess: result.categories?.crawlability?.score || 0,
-      contentStructure: result.categories?.contentStructure?.score || 0,
-      technicalInfra: result.categories?.technicalPerformance?.score || 0,
-      structuredData: result.categories?.structuredData?.score || 0,
+      aiAccess: result.categories?.crawlability_access?.score || 
+                result.categories?.crawlability?.score || 
+                result.categories?.find(c => c.id === 'crawlability_access')?.score || 0,
+      contentStructure: result.categories?.content_structure?.score || 
+                       result.categories?.contentStructure?.score || 
+                       result.categories?.find(c => c.id === 'content_structure')?.score || 0,
+      technicalInfra: result.categories?.technical_infrastructure?.score || 
+                     result.categories?.technicalPerformance?.score || 
+                     result.categories?.find(c => c.id === 'technical_infrastructure')?.score || 0,
+      structuredData: result.categories?.structured_data?.score || 
+                     result.categories?.structuredData?.score || 
+                     result.categories?.find(c => c.id === 'structured_data')?.score || 0,
     },
     insights: [],
-    recommendations: (() => {
-      // Use new centralized recommendation service
-      const { recommendationService } = require('@/lib/services/RecommendationService');
-      const summary = recommendationService.generateSingleSiteRecommendations(result);
-      return recommendationService.formatForUI(summary.prioritized);
-    })()
+    recommendations
   };
 
   const getScoreColor = (score: number) => {

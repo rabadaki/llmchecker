@@ -106,11 +106,15 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
   const worstPerforming = results.reduce((worst, site) => ((site.overallScore || 0) < (worst.overallScore || 0) ? site : worst))
 
   const categoryAverages = {
-    aiAccess: Math.round(results.reduce((sum, site) => sum + site.categories.aiAccess, 0) / results.length),
-    contentStructure: Math.round(
-      results.reduce((sum, site) => sum + site.categories.contentStructure, 0) / results.length,
+    aiAccess: Math.round(
+      results.reduce((sum, site) => sum + (site.categories?.aiAccess || 0), 0) / Math.max(results.length, 1)
     ),
-    technicalInfra: Math.round(results.reduce((sum, site) => sum + site.categories.technicalInfra, 0) / results.length),
+    contentStructure: Math.round(
+      results.reduce((sum, site) => sum + (site.categories?.contentStructure || 0), 0) / Math.max(results.length, 1)
+    ),
+    technicalInfra: Math.round(
+      results.reduce((sum, site) => sum + (site.categories?.technicalInfra || 0), 0) / Math.max(results.length, 1)
+    ),
   }
 
   const getScoreColor = (score: number) => {
@@ -144,15 +148,22 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
 
     // Collect all recommendations and group by title
     results.forEach((site, siteIndex) => {
+      // Add defensive check for recommendations array
+      if (!site.recommendations || !Array.isArray(site.recommendations)) {
+        return;
+      }
+      
       site.recommendations.forEach((rec) => {
+        if (!rec || !rec.title) return; // Skip invalid recommendations
+        
         const key = rec.title; // Group by recommendation title
         
         if (recommendationMap.has(key)) {
           // Add this site to existing recommendation
           recommendationMap.get(key)!.sites.push({
-            siteName: site.title,
-            siteUrl: site.url,
-            siteType: site.type,
+            siteName: site.title || 'Unknown',
+            siteUrl: site.url || '',
+            siteType: site.type || 'homepage',
             siteIndex,
           });
         } else {
@@ -273,7 +284,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
   }
 
   // Helper to get structured data bonus (only shows bonus for high scores)
-  const getStructuredDataScore = (site) => {
+  const getStructuredDataScore = (site: any) => {
     let structuredDataScore = 0;
     
     // Check if categories is an object with structuredData property
@@ -282,7 +293,7 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
     }
     // Fallback: if categories is an array (legacy format)
     else if (Array.isArray(site.categories)) {
-      const cat = site.categories.find(cat => cat.id === 'structured_data');
+      const cat = site.categories.find((cat: any) => cat.id === 'structured_data');
       structuredDataScore = cat ? cat.score : 0;
     }
     
@@ -424,23 +435,23 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
                         </td>
                         <td className="text-center py-1.5 sm:py-3 px-0.5 sm:px-4">
                           <div
-                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories.aiAccess)} ${getScoreColor(site.categories.aiAccess)}`}
+                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories?.aiAccess || 0)} ${getScoreColor(site.categories?.aiAccess || 0)}`}
                           >
-                            {site.categories.aiAccess}
+                            {site.categories?.aiAccess || 0}
                           </div>
                         </td>
                         <td className="text-center py-1.5 sm:py-3 px-0.5 sm:px-4">
                           <div
-                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories.contentStructure)} ${getScoreColor(site.categories.contentStructure)}`}
+                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories?.contentStructure || 0)} ${getScoreColor(site.categories?.contentStructure || 0)}`}
                           >
-                            {site.categories.contentStructure}
+                            {site.categories?.contentStructure || 0}
                           </div>
                         </td>
                         <td className="text-center py-1.5 sm:py-3 px-0.5 sm:px-4">
                           <div
-                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories.technicalInfra)} ${getScoreColor(site.categories.technicalInfra)}`}
+                            className={`inline-flex items-center justify-center w-8 sm:w-12 h-6 sm:h-8 rounded text-xs sm:text-sm font-medium ${getScoreBg(site.categories?.technicalInfra || 0)} ${getScoreColor(site.categories?.technicalInfra || 0)}`}
                           >
-                            {site.categories.technicalInfra}
+                            {site.categories?.technicalInfra || 0}
                           </div>
                         </td>
                       </tr>
