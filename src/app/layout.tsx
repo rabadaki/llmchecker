@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://amivisibleonai.vercel.app'),
+  metadataBase: new URL('https://amivisibleonai.com'),
   title: "Free AI SEO Tool - Check Your Website's AI Visibility | Am I Visible on AI",
   description: "Free AI SEO tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI can find your website. Get instant schema markup analysis & optimization tips. 100% free.",
   keywords: "AI SEO tool, free AI SEO, robots.txt checker, AI visibility, ChatGPT SEO, Claude search, Perplexity optimization, AI crawler analysis, schema markup checker, AI search optimization, LLM visibility, free SEO tool",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Free AI SEO Tool - Check Your Website's AI Visibility",
     description: "Free robots.txt checker & AI visibility analysis for ChatGPT, Claude & Perplexity. Test if AI crawlers can access your website. Get instant optimization recommendations.",
-    url: "https://amivisibleonai.vercel.app",
+    url: "https://amivisibleonai.com",
     siteName: "Am I Visible on AI",
     type: "website",
   },

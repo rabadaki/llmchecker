@@ -44,7 +44,7 @@ User-agent: *
 Allow: /
 
 # Sitemap Location
-Sitemap: https://amivisibleonai.vercel.app/sitemap.xml
+Sitemap: https://amivisibleonai.com/sitemap.xml
 
 # Crawl-delay to be respectful to servers
 Crawl-delay: 1

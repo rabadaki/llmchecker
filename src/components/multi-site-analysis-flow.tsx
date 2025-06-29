@@ -105,16 +105,12 @@ export function MultiSiteAnalysisFlow({ sites, baseDomain, onComplete }: MultiSi
               `${analysis.categories.length} categories analyzed`,
               `${analysis.categories.reduce((sum: number, cat: any) => sum + cat.recommendations.length, 0)} recommendations`
             ],
-            recommendations: analysis.categories.flatMap((cat: any) => 
-              cat.recommendations.map((rec: string) => ({
-                title: rec.replace(/^[🚫⚠️⭐🔧✅🏗️📝📋🖥️⚡🗺️🧹📄🤖📅🔄✍️📚🎯📊📈📍🔗🔒]/g, '').split(':')[0].trim(),
-                impact: rec.includes('Add') || rec.includes('Enable') || rec.includes('Create') ? 'high' : 
-                       rec.includes('Improve') || rec.includes('Optimize') ? 'medium' : 'low',
-                effort: rec.includes('robots.txt') || rec.includes('sitemap') || rec.includes('HTTPS') ? 'easy' :
-                       rec.includes('structured data') || rec.includes('schema') ? 'medium' : 'hard',
-                category: cat.name
-              }))
-            )
+            recommendations: (() => {
+              // Use new centralized recommendation service
+              const { recommendationService } = require('@/lib/services/RecommendationService');
+              const summary = recommendationService.generateSingleSiteRecommendations(analysis);
+              return recommendationService.formatForUI(summary.prioritized);
+            })()
           };
         });
 

@@ -49,12 +49,12 @@ export function ModernResultsEnhanced({ result, onReset }: ModernResultsEnhanced
       structuredData: result.categories?.structuredData?.score || 0,
     },
     insights: [],
-    recommendations: result.recommendations?.quickWins?.map((rec: any) => ({
-      title: rec.title,
-      impact: rec.impact,
-      effort: rec.effort || "medium",
-      category: rec.category || "General"
-    })) || []
+    recommendations: (() => {
+      // Use new centralized recommendation service
+      const { recommendationService } = require('@/lib/services/RecommendationService');
+      const summary = recommendationService.generateSingleSiteRecommendations(result);
+      return recommendationService.formatForUI(summary.prioritized);
+    })()
   };
 
   const getScoreColor = (score: number) => {

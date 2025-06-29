@@ -303,12 +303,12 @@ export function MultiSiteDashboard({ results, originalSearchTerm, onReset, isSha
         <meta name="description" content="Compare AI visibility and SEO scores across multiple websites. See which sites are most discoverable by ChatGPT, Claude, and Perplexity." />
         <meta property="og:title" content="Multi-Site AI Visibility Dashboard – AI SEO Checker" />
         <meta property="og:description" content="Compare AI visibility and SEO scores across multiple websites. See which sites are most discoverable by ChatGPT, Claude, and Perplexity." />
-        <meta property="og:image" content="https://amivisibleonai.vercel.app/og-image.png" />
-        <meta property="og:url" content="https://amivisibleonai.vercel.app/dashboard" />
+        <meta property="og:image" content="https://amivisibleonai.com/og-image.png" />
+        <meta property="og:url" content="https://amivisibleonai.com/dashboard" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Multi-Site AI Visibility Dashboard – AI SEO Checker" />
         <meta name="twitter:description" content="Compare AI visibility and SEO scores across multiple websites. See which sites are most discoverable by ChatGPT, Claude, and Perplexity." />
-        <meta name="twitter:image" content="https://amivisibleonai.vercel.app/og-image.png" />
+        <meta name="twitter:image" content="https://amivisibleonai.com/og-image.png" />
       </Head>
       <div className="bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-12">

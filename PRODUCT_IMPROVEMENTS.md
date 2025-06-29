@@ -8,8 +8,7 @@
 **Impact**: Missing major AI platforms in analysis
 
 #### Missing AI Crawler User Agents:
-```
-ClaudeBot/1.0
+```ClaudeBot/1.0
 PerplexityBot/1.0  
 Perplexity-User/1.0
 Anthropic-AI/1.0
@@ -184,6 +183,34 @@ const AI_SCHEMA_PRIORITIES = {
 - [ ] **API Access**: Programmatic analysis capabilities
 - [ ] **White-Label Options**: Custom branding for agencies
 - [ ] **Advanced Reporting**: PDF reports, scheduled analyses
+
+### L. Automated Content Workflow & Unpublished Drafts Page
+
+**Goal:** Automate content ideation, drafting, and publishing for maximum SEO and AI visibility, while keeping human review easy and user-friendly.
+
+#### Workflow Overview:
+1. **Content Ideation (Automated):**
+   - Use DataForSEO and LLMs to generate content ideas focused on SEO and AI visibility.
+   - Ideas are turned into draft blog posts (MDX files) following best practices (EEAT, schema, FAQ, etc.).
+2. **Draft Generation (Automated):**
+   - Drafts are saved as MDX files in `/src/app/blog/drafts/`.
+   - Each draft includes all metadata and is formatted for the site.
+3. **Review & Approval (Manual, via Web UI):**
+   - Private page (e.g., `/blog/unpublished`) lists all drafts for review.
+   - Users can preview, approve/publish, edit, or delete drafts from the UI.
+4. **Publishing (Semi-Automated):**
+   - On approval, draft is moved to `/src/app/blog/`, added to `posts-meta.ts`, and removed from `/drafts`.
+   - Optionally, updates internal links and pillar content.
+5. **(Optional) Notifications:**
+   - Email or Slack notifications when new drafts are available.
+6. **(Optional) Full Automation:**
+   - Once trusted, agent can auto-publish on a schedule.
+
+**Benefits:**
+- No third-party tools required; everything stays in-app.
+- Easy, user-friendly review and approval process.
+- Automation + control: agent handles ideation/drafting, user controls publishing.
+- Extensible for future features (search, filters, analytics, etc.).
 
 ---
 

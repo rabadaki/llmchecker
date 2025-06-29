@@ -286,107 +286,17 @@ export class AnalysisService {
   }
 
   private generateRecommendations(checks: CheckResult[]): string[] {
-    const recommendations: string[] = [];
+    // Use new centralized recommendation service for legacy compatibility
+    const { recommendationService } = require('./RecommendationService');
     
-    checks.forEach(check => {
-      const actionableRec = this.getActionableRecommendation(check);
-      if (actionableRec) {
-        recommendations.push(actionableRec);
-      }
-    });
-    
-    return recommendations;
-  }
-
-  private getActionableRecommendation(check: CheckResult): string | null {
-    // Only provide recommendations for checks that need improvement
-    if (check.score >= 80) return null;
-    
-    const recommendations: Record<string, Record<string, string>> = {
-      // AI Access Control
-      'robots_txt': {
-        low: '🚫 Add robots.txt file allowing AI crawlers: GPTBot, ChatGPT-User, Claude-Web, Bard-Google',
-        medium: '⚠️ Update robots.txt to explicitly allow major AI crawlers and remove blocking rules',
-      },
-      'response_time': {
-        low: '⚡ Optimize server response time: enable caching, CDN, compress images, minify CSS/JS',
-        medium: '🔧 Improve page speed: optimize database queries, enable gzip compression',
-      },
-      'https': {
-        low: '🔒 Enable HTTPS: get SSL certificate from Let\'s Encrypt or your hosting provider',
-      },
-      
-      // Structured Data
-      'schema_coverage': {
-        low: '📊 Add JSON-LD structured data: start with Organization, WebSite, and Article schemas',
-        medium: '📈 Expand schema coverage: add Product, FAQ, Review, or Event schemas as relevant',
-      },
-      'schema_validity': {
-        low: '🔧 Fix JSON-LD syntax errors: validate at schema.org/validator and fix malformed data',
-        medium: '✅ Complete missing schema properties: add required fields like author, datePublished, image',
-      },
-      'rich_results': {
-        low: '⭐ Make schemas rich-result ready: add required properties for Google rich snippets',
-        medium: '🎯 Enhance schema completeness: add optional properties for better rich snippet display',
-      },
-      
-      // Content Structure  
-      'semantic_html': {
-        low: '🏗️ Replace generic divs with semantic HTML: use <main>, <article>, <section>, <nav>, <header>',
-        medium: '📝 Improve semantic structure: add <aside>, <figure>, <time> elements where appropriate',
-      },
-      'heading_hierarchy': {
-        low: '📋 Fix heading structure: ensure single H1, logical H2→H3→H4 progression without skipping levels',
-        medium: '🎯 Optimize heading hierarchy: review heading levels and ensure proper content organization',
-      },
-      'ssr_content': {
-        low: '🖥️ Enable server-side rendering: ensure content loads without JavaScript for AI crawlers',
-        medium: '⚡ Improve SSR coverage: render more content server-side, reduce client-side dependencies',
-      },
-      
-      // Technical Infrastructure
-      'sitemap': {
-        low: '🗺️ Create XML sitemap: generate sitemap.xml with all important pages and submit to search engines',
-        medium: '📍 Enhance sitemap: ensure all pages included, add lastmod dates, create sitemap index',
-      },
-      'clean_extraction': {
-        low: '🧹 Improve content clarity: move main content to <main> tag, reduce navigation/ads noise',
-        medium: '📖 Optimize content structure: separate primary content from sidebar/footer elements',
-      },
-      'alt_formats': {
-        low: '📄 Add alternative formats: create RSS feed, JSON feed, or API endpoints for content access',
-        medium: '🔗 Expand content formats: add mobile-optimized versions, AMP pages, or structured APIs',
-      },
-      'llms_txt': {
-        low: '🤖 Create llms.txt file: specify AI training permissions at /llms.txt (emerging standard)',
-      },
-      
-      // Additional content checks
-      'freshness': {
-        low: '📅 Add publication dates: include datePublished, dateModified in content and schema',
-        medium: '🔄 Update content timestamps: ensure recent modification dates are visible and accurate',
-      },
-      'completeness': {
-        low: '📝 Expand content depth: add more comprehensive information, examples, and details',
-        medium: '🎯 Enhance content quality: add related topics, FAQs, and supporting information',
-      },
-      'clarity': {
-        low: '✍️ Improve content clarity: use clear headings, bullet points, and structured formatting',
-        medium: '📚 Enhance readability: break up long paragraphs, add subheadings, improve flow',
-      }
+    // Convert checks to simple analysis format for recommendation service
+    const mockAnalysis = {
+      categories: [{
+        checks: checks.filter(check => check.score < 80) // Only checks that need improvement
+      }]
     };
     
-    const checkRecs = recommendations[check.id];
-    if (!checkRecs) return null;
-    
-    // Choose recommendation based on score
-    if (check.score < 40 && checkRecs.low) {
-      return checkRecs.low;
-    } else if (check.score < 80 && checkRecs.medium) {
-      return checkRecs.medium;
-    }
-    
-    return null;
+    return recommendationService.getLegacyRecommendations(mockAnalysis);
   }
 
   private generateSummary(categories: CategoryResult[], overallScore: number): { strengths: string[]; improvements: string[]; priority: 'low' | 'medium' | 'high' } {
@@ -408,15 +318,84 @@ export class AnalysisService {
     return { strengths, improvements, priority };
   }
 
-  // Simplified analyzer methods
+  // Enhanced AI crawler detection
   private async checkRobotsTxt(url: string): Promise<number> {
     try {
       const robotsUrl = new URL('/robots.txt', url).toString();
-      const response = await this.httpService.head(robotsUrl);
-      return response.status === 200 ? 85 : 30;
+      const response = await this.httpService.get(robotsUrl);
+      
+      if (response.status !== 200) {
+        return 0; // No robots.txt file = 0 points
+      }
+
+      const robotsContent = response.data.toLowerCase();
+      return this.analyzeAiCrawlerAccess(robotsContent);
     } catch {
-      return 30;
+      return 0; // Error accessing robots.txt = 0 points
     }
+  }
+
+  private analyzeAiCrawlerAccess(robotsContent: string): number {
+    const AI_CRAWLERS = {
+      'gptbot': { weight: 10, platform: 'ChatGPT', critical: true },
+      'chatgpt-user': { weight: 8, platform: 'ChatGPT', critical: true },
+      'claudebot': { weight: 9, platform: 'Claude', critical: true },
+      'claude-web': { weight: 7, platform: 'Claude', critical: false },
+      'anthropic-ai': { weight: 6, platform: 'Claude', critical: false },
+      'perplexitybot': { weight: 8, platform: 'Perplexity', critical: true },
+      'perplexity-user': { weight: 6, platform: 'Perplexity', critical: false },
+      'bard': { weight: 7, platform: 'Bard', critical: true },
+      'googlebot': { weight: 8, platform: 'Google', critical: true },
+      'bingbot': { weight: 6, platform: 'Bing', critical: false }
+    };
+
+    let totalWeight = 0;
+    let allowedWeight = 0;
+    let blockedCritical = 0;
+
+    for (const [crawler, config] of Object.entries(AI_CRAWLERS)) {
+      totalWeight += config.weight;
+      
+      const isAllowed = this.isCrawlerAllowed(robotsContent, crawler);
+      
+      if (isAllowed) {
+        allowedWeight += config.weight;
+      } else if (config.critical) {
+        blockedCritical += 1;
+      }
+    }
+
+    // Calculate score: base percentage + penalty for blocked critical crawlers
+    const baseScore = Math.round((allowedWeight / totalWeight) * 100);
+    const criticalPenalty = blockedCritical * 15; // -15 points per blocked critical crawler
+    
+    return Math.max(0, Math.min(100, baseScore - criticalPenalty));
+  }
+
+  private isCrawlerAllowed(robotsContent: string, crawler: string): boolean {
+    const lines = robotsContent.split('\n').map(line => line.trim().toLowerCase());
+    let currentUserAgent = '';
+    let isTargetAgent = false;
+    
+    for (const line of lines) {
+      if (line.startsWith('user-agent:')) {
+        currentUserAgent = line.replace('user-agent:', '').trim();
+        isTargetAgent = currentUserAgent === crawler || currentUserAgent === '*';
+      } else if (isTargetAgent && line.startsWith('disallow:')) {
+        const disallowPath = line.replace('disallow:', '').trim();
+        if (disallowPath === '/' || disallowPath === '') {
+          return false; // Explicitly blocked
+        }
+      } else if (isTargetAgent && line.startsWith('allow:')) {
+        const allowPath = line.replace('allow:', '').trim();
+        if (allowPath === '/' || allowPath === '') {
+          return true; // Explicitly allowed
+        }
+      }
+    }
+    
+    // If no explicit rules found, assume allowed (default robots.txt behavior)
+    return true;
   }
 
   private async checkSitemap(url: string): Promise<number> {
@@ -435,10 +414,105 @@ export class AnalysisService {
   }
 
   private scoreSchemaMarkup($: any): number {
-    const schemaCount = $('script[type="application/ld+json"]').length;
-    console.log('Schema markup count:', schemaCount);
-    if (schemaCount === 0) return 0; // No structured data
-    return Math.min(100, schemaCount * 25 + 25);
+    const schemas = this.extractSchemas($);
+    if (schemas.length === 0) return 0; // No structured data
+    
+    return this.calculateSchemaScore(schemas, $);
+  }
+
+  private extractSchemas($: any): any[] {
+    const schemas: any[] = [];
+    
+    $('script[type="application/ld+json"]').each((_, element) => {
+      try {
+        const jsonContent = $(element).html() || '';
+        const data = JSON.parse(jsonContent);
+        schemas.push(data);
+      } catch {
+        // Invalid JSON - skip
+      }
+    });
+    
+    return schemas;
+  }
+
+  private calculateSchemaScore(schemas: any[], $: any): number {
+    const AI_SCHEMA_PRIORITIES = {
+      'FAQPage': { score: 25, aiRelevance: 'Critical for AI Q&A responses' },
+      'Question': { score: 20, aiRelevance: 'Individual Q&A pairs for AI' },
+      'HowTo': { score: 20, aiRelevance: 'AI loves step-by-step instructions' },
+      'Article': { score: 15, aiRelevance: 'Standard content schema' },
+      'BlogPosting': { score: 15, aiRelevance: 'Blog content optimization' },
+      'Product': { score: 15, aiRelevance: 'E-commerce visibility' },
+      'Review': { score: 12, aiRelevance: 'Trust signals for AI' },
+      'Organization': { score: 10, aiRelevance: 'Entity recognition' },
+      'WebSite': { score: 8, aiRelevance: 'Basic site structure' },
+      'Person': { score: 8, aiRelevance: 'Author credibility' },
+      'BreadcrumbList': { score: 8, aiRelevance: 'Navigation structure' },
+      'VideoObject': { score: 10, aiRelevance: 'Multimedia content' }
+    };
+
+    let totalScore = 0;
+    const foundTypes = new Set<string>();
+
+    // Analyze each schema
+    for (const schema of schemas) {
+      const type = schema['@type'];
+      if (type && AI_SCHEMA_PRIORITIES[type]) {
+        foundTypes.add(type);
+        totalScore += AI_SCHEMA_PRIORITIES[type].score;
+      }
+    }
+
+    // Bonus for FAQ content detection even without schema
+    if (!foundTypes.has('FAQPage') && this.detectFAQContent($)) {
+      totalScore += 10; // Bonus for FAQ content without proper schema
+    }
+
+    // Diversity bonus - reward having multiple schema types
+    if (foundTypes.size > 1) {
+      totalScore += Math.min(15, (foundTypes.size - 1) * 5);
+    }
+
+    return Math.min(100, totalScore);
+  }
+
+  private detectFAQContent($: any): boolean {
+    const text = $.text().toLowerCase();
+    
+    // Look for FAQ patterns in content
+    const faqIndicators = [
+      /frequently asked questions?/i,
+      /faq/i,
+      /questions? (?:and|&) answers?/i,
+      /q&a/i
+    ];
+
+    const questionPatterns = [
+      /what (?:is|are|does|do|can|will|would|should)/gi,
+      /how (?:do|does|can|to|much|many|long|often)/gi,
+      /why (?:do|does|is|are|would|should|can)/gi,
+      /when (?:do|does|is|are|will|would|should|can)/gi,
+      /where (?:do|does|is|are|can|will|would|should)/gi,
+      /who (?:is|are|can|will|would|should|does)/gi,
+      /which (?:is|are|do|does|can|will|would|should)/gi
+    ];
+
+    // Check for FAQ indicators
+    const hasFAQSection = faqIndicators.some(pattern => pattern.test(text));
+    
+    // Count question patterns
+    const questionCount = questionPatterns.reduce((count, pattern) => {
+      const matches = text.match(pattern);
+      return count + (matches ? matches.length : 0);
+    }, 0);
+
+    // Look for Q: or Question: patterns
+    const qPatterns = /(?:^|\n)\s*(?:q:|question:|q\d+:|question\s+\d+:)/gmi;
+    const qMatches = text.match(qPatterns);
+    const hasQAFormat = qMatches && qMatches.length >= 2;
+
+    return hasFAQSection || questionCount >= 3 || hasQAFormat;
   }
 
   private validateSchemas($: any): number {
@@ -515,6 +589,40 @@ export class AnalysisService {
     let score = 0;
     
     switch (type) {
+      case 'FAQPage':
+        if (data.mainEntity) {
+          score += 10; // Required for FAQPage
+          if (Array.isArray(data.mainEntity)) {
+            const validQuestions = data.mainEntity.filter(q => 
+              q['@type'] === 'Question' && q.name && q.acceptedAnswer
+            );
+            score += Math.min(10, validQuestions.length * 2); // Up to 10 points for valid questions
+          }
+        }
+        break;
+        
+      case 'Question':
+        if (data.name) score += 10; // Question text
+        if (data.acceptedAnswer) {
+          score += 10; // Answer is crucial
+          if (data.acceptedAnswer.text || data.acceptedAnswer.description) {
+            score += 5; // Answer has content
+          }
+        }
+        break;
+        
+      case 'HowTo':
+        if (data.name) score += 5;
+        if (data.description) score += 5;
+        if (data.step || data.steps) {
+          score += 10; // Steps are crucial for HowTo
+          const steps = data.step || data.steps;
+          if (Array.isArray(steps) && steps.length > 1) {
+            score += 5; // Multiple steps
+          }
+        }
+        break;
+        
       case 'Article':
       case 'BlogPosting':
       case 'NewsArticle':
@@ -552,6 +660,13 @@ export class AnalysisService {
         if (data.url || data.sameAs) score += 5;
         break;
         
+      case 'Review':
+        if (data.reviewBody) score += 5;
+        if (data.author) score += 5;
+        if (data.reviewRating) score += 5;
+        if (data.itemReviewed) score += 5;
+        break;
+        
       default:
         // Generic validation for unknown types
         if (data.name) score += 3;
@@ -566,6 +681,9 @@ export class AnalysisService {
 
   private getRequiredFieldsForType(type: string): string[] {
     const requiredFields: Record<string, string[]> = {
+      'FAQPage': ['mainEntity'],
+      'Question': ['name', 'acceptedAnswer'],
+      'HowTo': ['name', 'step'],
       'Article': ['headline', 'author'],
       'BlogPosting': ['headline', 'author'],
       'NewsArticle': ['headline', 'author', 'datePublished'],
@@ -582,23 +700,38 @@ export class AnalysisService {
   }
 
   private checkRichResults($: any): number {
-    // Check for common rich result schemas
+    // Enhanced rich results checking with AI-priority schemas
     let richResultScore = 0;
     let hasSchema = false;
+    
+    const RICH_RESULT_SCHEMAS = {
+      'FAQPage': 30,    // High value for AI Q&A
+      'HowTo': 25,      // High value for AI instructions
+      'Article': 20,    // Standard content
+      'Product': 20,    // E-commerce
+      'Review': 20,     // Trust signals
+      'Event': 15,      // Events
+      'Organization': 15, // Entity
+      'Question': 15,   // Q&A pairs
+      'Recipe': 15,     // Structured content
+      'VideoObject': 10 // Multimedia
+    };
+    
     $('script[type="application/ld+json"]').each((_, element) => {
       hasSchema = true;
       try {
         const data = JSON.parse($(element).html() || '');
         const type = data['@type'];
-        if (['Article', 'Product', 'Review', 'Event', 'Organization'].includes(type)) {
-          richResultScore += 20;
+        if (RICH_RESULT_SCHEMAS[type]) {
+          richResultScore += RICH_RESULT_SCHEMAS[type];
         }
       } catch {
         // Invalid JSON
       }
     });
+    
     if (!hasSchema) return 0; // No schemas present
-    return Math.min(100, richResultScore + 40); // Base 40 points if schemas exist
+    return Math.min(100, richResultScore + 20); // Base 20 points + schema-specific scores
   }
 
   private scoreHeadingHierarchy($: any): number {
