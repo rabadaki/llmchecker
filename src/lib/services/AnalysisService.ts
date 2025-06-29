@@ -13,6 +13,7 @@ import { URL } from 'url';
 export class AnalysisService {
   private httpService: HttpService;
   private contextScoringService: ContextAwareScoringService;
+  private lastRobotsTxtDetails: string = '';
 
   constructor() {
     this.httpService = new HttpService();
@@ -231,7 +232,9 @@ export class AnalysisService {
             name: checkDef.name,
             score,
             status: scoring?.criteria || 'Unknown',
-            details: scoring?.details || 'No details available',
+            details: checkDef.id === 'robots_txt' && this.lastRobotsTxtDetails 
+              ? this.lastRobotsTxtDetails 
+              : scoring?.details || 'No details available',
             executionTime: Date.now() - checkStart
           });
 
@@ -339,13 +342,16 @@ export class AnalysisService {
       }
 
       const robotsContent = response.data.toLowerCase();
-      return this.analyzeAiCrawlerAccess(robotsContent);
+      const result = this.analyzeAiCrawlerAccess(robotsContent);
+      // Store the details for use in the check result
+      this.lastRobotsTxtDetails = result.details;
+      return result.score;
     } catch {
       return 0; // Error accessing robots.txt = 0 points
     }
   }
 
-  private analyzeAiCrawlerAccess(robotsContent: string): number {
+  private analyzeAiCrawlerAccess(robotsContent: string): { score: number; details: string } {
     const AI_CRAWLERS = {
       'gptbot': { weight: 10, platform: 'ChatGPT', critical: true },
       'chatgpt-user': { weight: 8, platform: 'ChatGPT', critical: true },
@@ -362,24 +368,41 @@ export class AnalysisService {
     let totalWeight = 0;
     let allowedWeight = 0;
     let blockedCritical = 0;
+    const crawlerStatuses: string[] = [];
+    const criticalCrawlers = new Set<string>();
 
     for (const [crawler, config] of Object.entries(AI_CRAWLERS)) {
-      totalWeight += config.weight;
+      if (!config.critical) continue; // Only show critical crawlers in details
       
+      totalWeight += config.weight;
       const isAllowed = this.isCrawlerAllowed(robotsContent, crawler);
       
       if (isAllowed) {
         allowedWeight += config.weight;
-      } else if (config.critical) {
+        if (!criticalCrawlers.has(config.platform)) {
+          crawlerStatuses.push(`${config.platform} ✓`);
+          criticalCrawlers.add(config.platform);
+        }
+      } else {
         blockedCritical += 1;
+        if (!criticalCrawlers.has(config.platform)) {
+          crawlerStatuses.push(`${config.platform} ✗`);
+          criticalCrawlers.add(config.platform);
+        }
       }
     }
 
     // Calculate score: base percentage + penalty for blocked critical crawlers
     const baseScore = Math.round((allowedWeight / totalWeight) * 100);
     const criticalPenalty = blockedCritical * 15; // -15 points per blocked critical crawler
+    const score = Math.max(0, Math.min(100, baseScore - criticalPenalty));
     
-    return Math.max(0, Math.min(100, baseScore - criticalPenalty));
+    // Create detailed status message
+    const details = crawlerStatuses.length > 0 
+      ? `AI crawler access: ${crawlerStatuses.join(', ')}`
+      : 'No AI crawler rules detected';
+    
+    return { score, details };
   }
 
   private isCrawlerAllowed(robotsContent: string, crawler: string): boolean {
