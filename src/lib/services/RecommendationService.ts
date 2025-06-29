@@ -42,9 +42,22 @@ export class RecommendationService {
   /**
    * Generate recommendations for single site analysis
    */
-  generateSingleSiteRecommendations(analysis: AnalysisResponse): RecommendationSummary {
-    const templates = getRecommendationsForAnalysis(analysis.categories);
-    const processed = this.processRecommendations(templates, [analysis.url]);
+  generateSingleSiteRecommendations(analysis: any): RecommendationSummary {
+    // Handle different data structures that might be passed
+    let categories = [];
+    
+    if (analysis.categories && Array.isArray(analysis.categories)) {
+      categories = analysis.categories;
+    } else if (analysis.result && analysis.result.categories && Array.isArray(analysis.result.categories)) {
+      categories = analysis.result.categories;
+    } else {
+      console.warn('Invalid analysis structure:', analysis);
+      return this.createSummary([]);
+    }
+    
+    const templates = getRecommendationsForAnalysis(categories);
+    const url = analysis.url || analysis.result?.url || 'unknown';
+    const processed = this.processRecommendations(templates, [url]);
     
     return this.createSummary(processed);
   }
@@ -52,7 +65,13 @@ export class RecommendationService {
   /**
    * Generate recommendations for multi-site analysis
    */
-  generateMultiSiteRecommendations(analyses: AnalysisResponse[]): RecommendationSummary {
+  generateMultiSiteRecommendations(analyses: any[]): RecommendationSummary {
+    // Handle case where analyses might not be an array
+    if (!Array.isArray(analyses)) {
+      console.warn('Analyses is not an array:', analyses);
+      return this.createSummary([]);
+    }
+    
     // Aggregate all recommendations across sites
     const allRecommendations = new Map<string, {
       template: RecommendationTemplate;
@@ -61,19 +80,28 @@ export class RecommendationService {
     }>();
     
     analyses.forEach(analysis => {
-      const templates = getRecommendationsForAnalysis(analysis.categories);
+      // Handle different data structures
+      let categories = [];
+      if (analysis.categories && Array.isArray(analysis.categories)) {
+        categories = analysis.categories;
+      } else if (analysis.result && analysis.result.categories && Array.isArray(analysis.result.categories)) {
+        categories = analysis.result.categories;
+      }
+      
+      const templates = getRecommendationsForAnalysis(categories);
+      const url = analysis.url || analysis.result?.url || 'unknown';
       
       templates.forEach(template => {
         const existing = allRecommendations.get(template.id);
         const impactWeight = this.getImpactWeight(template.impact);
         
         if (existing) {
-          existing.affectedSites.push(analysis.url);
+          existing.affectedSites.push(url);
           existing.totalImpact += impactWeight;
         } else {
           allRecommendations.set(template.id, {
             template,
-            affectedSites: [analysis.url],
+            affectedSites: [url],
             totalImpact: impactWeight
           });
         }

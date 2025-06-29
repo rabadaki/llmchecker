@@ -334,11 +334,21 @@ export function getRecommendationsForCheck(checkId: string, score: number): Reco
 export function getRecommendationsForAnalysis(categories: any[]): RecommendationTemplate[] {
   const recommendations: RecommendationTemplate[] = [];
   
+  // Handle case where categories might not be an array
+  if (!Array.isArray(categories)) {
+    console.warn('Categories is not an array:', categories);
+    return [];
+  }
+  
   categories.forEach(category => {
-    category.checks?.forEach((check: any) => {
-      const checkRecs = getRecommendationsForCheck(check.id, check.score);
-      recommendations.push(...checkRecs);
-    });
+    if (category && category.checks && Array.isArray(category.checks)) {
+      category.checks.forEach((check: any) => {
+        if (check && check.id && typeof check.score === 'number') {
+          const checkRecs = getRecommendationsForCheck(check.id, check.score);
+          recommendations.push(...checkRecs);
+        }
+      });
+    }
   });
   
   // Remove duplicates and sort by impact
