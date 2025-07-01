@@ -6,6 +6,7 @@ import { Metadata } from "next";
 // Import all MDX files statically
 import WhyAiVisibilityMatters2025 from "../why-ai-visibility-matters-2025.mdx";
 import AiContentMyths2025 from "../ai-content-myths-2025.mdx";
+import CompleteGuideAiSeo2025 from "../complete-guide-ai-seo-2025.mdx";
 
 interface BlogArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -48,6 +49,7 @@ export async function generateMetadata({ params }: BlogArticlePageProps): Promis
 }
 
 const postComponents: Record<string, React.ComponentType> = {
+  "complete-guide-ai-seo-2025": CompleteGuideAiSeo2025,
   "why-ai-visibility-matters-2025": WhyAiVisibilityMatters2025,
   "ai-content-myths-2025": AiContentMyths2025,
 };

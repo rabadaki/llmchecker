@@ -1,0 +1,143 @@
+name: Coverage Report
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests with coverage
+      run: npm run test:coverage
+
+    - name: Generate coverage report comment
+      uses: 5monkeys/cobertura-action@master
+      with:
+        path: coverage/lcov.info
+        minimum_coverage: 70
+        skip_covered: false
+        show_line: true
+        show_branch: true
+        show_missing: true
+        show_class_names: true
+        only_changed_files: true
+
+    - name: Add coverage comment to PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          const fs = require('fs');
+          
+          // Read coverage summary
+          let coverageSummary = '';
+          try {
+            const coverage = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json', 'utf8'));
+            const total = coverage.total;
+            
+            coverageSummary = `## 📊 Test Coverage Report
+            
+            | Metric | Coverage | Status |
+            |--------|----------|--------|
+            | Lines | ${total.lines.pct.toFixed(2)}% | ${total.lines.pct >= 70 ? '✅' : '❌'} |
+            | Statements | ${total.statements.pct.toFixed(2)}% | ${total.statements.pct >= 70 ? '✅' : '❌'} |
+            | Functions | ${total.functions.pct.toFixed(2)}% | ${total.functions.pct >= 70 ? '✅' : '❌'} |
+            | Branches | ${total.branches.pct.toFixed(2)}% | ${total.branches.pct >= 70 ? '✅' : '❌'} |
+            
+            **Minimum coverage threshold:** 70%
+            
+            ### Coverage by Service
+            `;
+            
+            // Add per-file coverage for services
+            const services = ['AnalysisService', 'RecommendationService', 'HttpService', 'ContextAwareScoringService'];
+            for (const service of services) {
+              const key = Object.keys(coverage).find(k => k.includes(service));
+              if (key && coverage[key]) {
+                const svc = coverage[key];
+                coverageSummary += `\n- **${service}**: ${svc.lines.pct.toFixed(1)}% lines, ${svc.functions.pct.toFixed(1)}% functions`;
+              }
+            }
+            
+          } catch (error) {
+            coverageSummary = '## ⚠️ Coverage Report Generation Failed\n\nCould not parse coverage data.';
+          }
+          
+          // Find existing coverage comment
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && comment.body.includes('Test Coverage Report')
+          );
+          
+          // Update or create comment
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: coverageSummary
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: coverageSummary
+            });
+          }
+
+    - name: Coverage Status Check
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          const fs = require('fs');
+          
+          try {
+            const coverage = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json', 'utf8'));
+            const total = coverage.total;
+            const passed = total.lines.pct >= 70;
+            
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Code Coverage',
+              head_sha: context.sha,
+              status: 'completed',
+              conclusion: passed ? 'success' : 'failure',
+              output: {
+                title: `Coverage: ${total.lines.pct.toFixed(2)}%`,
+                summary: passed 
+                  ? `✅ Code coverage meets the minimum threshold of 70%`
+                  : `❌ Code coverage (${total.lines.pct.toFixed(2)}%) is below the minimum threshold of 70%`,
+              }
+            });
+          } catch (error) {
+            console.error('Failed to create coverage check:', error);
+          }

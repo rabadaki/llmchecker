@@ -407,13 +407,31 @@ export class AnalysisService {
 
   private isCrawlerAllowed(robotsContent: string, crawler: string): boolean {
     const lines = robotsContent.split('\n').map(line => line.trim().toLowerCase());
+    
+    // First pass: Look for specific crawler rules (higher priority)
+    let specificResult = this.checkSpecificCrawlerRules(lines, crawler);
+    if (specificResult !== null) {
+      return specificResult;
+    }
+    
+    // Second pass: Look for wildcard (*) rules (lower priority)
+    let wildcardResult = this.checkWildcardRules(lines);
+    if (wildcardResult !== null) {
+      return wildcardResult;
+    }
+    
+    // If no explicit rules found, assume allowed (default robots.txt behavior)
+    return true;
+  }
+
+  private checkSpecificCrawlerRules(lines: string[], crawler: string): boolean | null {
     let currentUserAgent = '';
     let isTargetAgent = false;
     
     for (const line of lines) {
       if (line.startsWith('user-agent:')) {
         currentUserAgent = line.replace('user-agent:', '').trim();
-        isTargetAgent = currentUserAgent === crawler || currentUserAgent === '*';
+        isTargetAgent = currentUserAgent === crawler;
       } else if (isTargetAgent && line.startsWith('disallow:')) {
         const disallowPath = line.replace('disallow:', '').trim();
         if (disallowPath === '/' || disallowPath === '') {
@@ -427,8 +445,31 @@ export class AnalysisService {
       }
     }
     
-    // If no explicit rules found, assume allowed (default robots.txt behavior)
-    return true;
+    return null; // No specific rules found
+  }
+
+  private checkWildcardRules(lines: string[]): boolean | null {
+    let currentUserAgent = '';
+    let isWildcard = false;
+    
+    for (const line of lines) {
+      if (line.startsWith('user-agent:')) {
+        currentUserAgent = line.replace('user-agent:', '').trim();
+        isWildcard = currentUserAgent === '*';
+      } else if (isWildcard && line.startsWith('disallow:')) {
+        const disallowPath = line.replace('disallow:', '').trim();
+        if (disallowPath === '/' || disallowPath === '') {
+          return false; // Blocked by wildcard
+        }
+      } else if (isWildcard && line.startsWith('allow:')) {
+        const allowPath = line.replace('allow:', '').trim();
+        if (allowPath === '/' || allowPath === '') {
+          return true; // Allowed by wildcard
+        }
+      }
+    }
+    
+    return null; // No wildcard rules found
   }
 
   private async checkSitemap(url: string): Promise<number> {
