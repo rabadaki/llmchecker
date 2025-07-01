@@ -1,16 +1,34 @@
-// Optional: configure or set up a testing framework before each test.
+// Configure testing framework and cleanup
 // If you delete this file, remove `setupFilesAfterEnv` from `jest.config.js`
 
-// Global test setup can go here
-// For example, if you need to mock console methods or set up global mocks
+// Global test setup and cleanup
+afterEach(() => {
+  jest.clearAllMocks();
+  jest.clearAllTimers();
+  jest.useRealTimers();
+});
+
+afterAll(async () => {
+  // Force garbage collection if available
+  if (global.gc) {
+    global.gc();
+  }
+  
+  // Clear any remaining timers/intervals
+  jest.clearAllTimers();
+  jest.useRealTimers();
+  
+  // Small delay to let async operations finish
+  await new Promise(resolve => setTimeout(resolve, 100));
+});
 
 // Mock console methods to reduce noise in tests
 global.console = {
   ...console,
-  // Uncomment to ignore specific console methods during tests
-  // log: jest.fn(),
-  // debug: jest.fn(),
-  // info: jest.fn(),
+  // Silence console methods during tests to reduce noise
+  log: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
 }

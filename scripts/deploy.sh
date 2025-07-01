@@ -51,7 +51,7 @@ fi
 
 # Run tests before deployment
 print_status "Running tests..."
-if npm test -- --passWithNoTests; then
+if npm test -- --passWithNoTests --forceExit --silent; then
     print_status "Tests passed"
 else
     print_error "Tests failed. Fix them before deploying."

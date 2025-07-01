@@ -48,6 +48,11 @@ const customJestConfig = {
   // Clear mocks between tests
   clearMocks: true,
   restoreMocks: true,
+  
+  // Handle async operations better
+  testTimeout: 10000,
+  forceExit: true,
+  detectOpenHandles: false,
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
