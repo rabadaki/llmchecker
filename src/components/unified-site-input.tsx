@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
 import { Globe, Zap, FileText, Code, ShoppingCart } from "lucide-react"
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { OpenAI, Anthropic, Gemini, Perplexity } from "@lobehub/icons"
@@ -26,7 +27,6 @@ interface UnifiedSiteInputProps {
 
 export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputProps) {
   const [url, setUrl] = useState("")
-  const [expandAnalysis, setExpandAnalysis] = useState(true)
   const [discoveredSites, setDiscoveredSites] = useState<DiscoveredSite[]>([])
   const [selectedSites, setSelectedSites] = useState<Set<string>>(new Set())
   const [isDiscovering, setIsDiscovering] = useState(false)
@@ -138,19 +138,8 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
     setIsValidUrl(true)
     setError(null)
 
-    if (expandAnalysis) {
-      // Discover multiple sites
-      await handleDiscoverSites(formattedUrl)
-    } else {
-      // Analyze single site immediately
-      const singleSite: DiscoveredSite = {
-        url: formattedUrl,
-        type: "homepage",
-        title: new URL(formattedUrl).hostname,
-        status: "discovered",
-      }
-      onAnalyze([singleSite])
-    }
+    // Always do multi-page analysis by default
+    await handleDiscoverSites(formattedUrl)
   }
 
   const toggleSiteSelection = (url: string) => {
@@ -185,42 +174,12 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
     <div className="bg-white">
       <div className="container mx-auto px-6 py-16">
         <header className="max-w-3xl mx-auto text-center">
-          {/* Badge */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6">
-            <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-blue-600 text-white" role="banner">
-              <Zap className="w-3.5 sm:w-4 h-3.5 sm:h-4 mr-1.5 sm:mr-2" aria-hidden="true" />
-              <span className="text-xs sm:text-sm font-medium">AI-Powered</span>
-            </div>
-            <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-green-600 text-white" role="banner">
-              <span className="text-xs sm:text-sm font-bold">100% FREE</span>
-            </div>
-            <div className="hidden sm:inline-flex items-center px-4 py-2 rounded-full bg-purple-600 text-white" role="banner">
-              <span className="text-sm font-medium">No Signup Required</span>
-            </div>
-          </div>
-
           {/* Main heading */}
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Free AI SEO Tool - Check Your Website's AI Visibility</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Is Your Website Visible to ChatGPT?</h1>
 
-          <p className="text-lg text-gray-600 mb-6 max-w-xl mx-auto">
-            Test if ChatGPT, Claude & Perplexity can find your website. Get free robots.txt analysis, schema markup validation, and instant AI optimization recommendations.
+          <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
+            Test if ChatGPT, Claude & Perplexity can find your website. Get instant analysis and actionable recommendations.
           </p>
-
-          {/* Quick Benefits - Desktop only */}
-          <div className="hidden sm:flex flex-wrap justify-center gap-6 mb-8 text-sm">
-            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-gray-700">Takes 30 seconds</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span className="text-gray-700">No technical knowledge needed</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span className="text-gray-700">Get actionable fixes</span>
-            </div>
-          </div>
         </header>
 
         <main className="max-w-3xl mx-auto">
@@ -266,26 +225,10 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
                     ) : (
                       <>
                         <MagnifyingGlassIcon className="w-5 h-5 mr-2" />
-                        Analyze
+                        Check My Site
                       </>
                     )}
                   </Button>
-                </div>
-
-                {/* Expand Analysis Checkbox */}
-                <div className="flex items-center space-x-3 justify-center">
-                  <Checkbox
-                    id="expand-analysis"
-                    checked={expandAnalysis}
-                    onCheckedChange={(checked) => setExpandAnalysis(checked === true)}
-                    disabled={isAnalyzing || isDiscovering}
-                  />
-                  <label
-                    htmlFor="expand-analysis"
-                    className="text-sm font-medium text-gray-700 cursor-pointer select-none"
-                  >
-                    Also analyze key pages, subdomains and paths
-                  </label>
                 </div>
 
                 {!isValidUrl && <p className="text-red-500 text-sm">Please enter a valid URL</p>}
@@ -314,8 +257,85 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
           </Card>
 
           </section>
-          
-          {/* Why This Matters Section */}
+
+          {/* Discovered Sites Selection */}
+          {discoveredSites.length > 0 && (
+            <Card className="p-8 mb-6">
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Found {discoveredSites.length} pages to analyze
+                </h3>
+                <p className="text-gray-600">
+                  Select which pages you'd like to include in your AI visibility analysis
+                </p>
+              </div>
+
+              <div className="grid gap-4 mb-6">
+                {discoveredSites.map((site) => {
+                  const Icon = siteTypeIcons[site.type] || Globe
+                  const colorClass = siteTypeColors[site.type] || "bg-gray-100 text-gray-700"
+
+                  return (
+                    <div
+                      key={site.url}
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        selectedSites.has(site.url)
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      onClick={() => toggleSiteSelection(site.url)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <Checkbox
+                          checked={selectedSites.has(site.url)}
+                          onCheckedChange={() => {}}
+                          className="pointer-events-none"
+                        />
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClass}`}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-semibold text-gray-900">{site.title}</h4>
+                            <Badge variant="secondary" className="text-xs">
+                              {site.type}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 truncate">{site.url}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="flex justify-center gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedSites(new Set())}
+                  disabled={selectedSites.size === 0}
+                >
+                  Clear All
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedSites(new Set(discoveredSites.map((s) => s.url)))}
+                  disabled={selectedSites.size === discoveredSites.length}
+                >
+                  Select All
+                </Button>
+                <Button
+                  onClick={handleAnalyzeSelected}
+                  disabled={selectedSites.size === 0}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Analyze {selectedSites.size} Selected {selectedSites.size === 1 ? "Site" : "Sites"}
+                </Button>
+              </div>
+            </Card>
+          )}
+
+          {/* Why This Matters Section - Now below the tool */}
           {!discoveredSites.length && (
             <section className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-xl">
               <div className="text-center mb-6">
@@ -416,54 +436,6 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-3">How Can You Fix Issues?</h3>
                   <p className="text-sm text-gray-600 leading-relaxed">Get copy-paste code fixes for robots.txt, missing schema markup examples, and specific technical improvements to boost your AI visibility score.</p>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Social Proof Section */}
-          {!discoveredSites.length && (
-            <section className="mt-16 max-w-4xl mx-auto">
-              <div className="text-center mb-10">
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Trusted by Website Owners Everywhere</h2>
-                <p className="text-base text-gray-600 max-w-2xl mx-auto">Join thousands of people who've improved their AI visibility</p>
-              </div>
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-blue-600 font-semibold text-sm">SM</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">Sarah M.</div>
-                      <div className="text-xs text-gray-500">E-commerce Store Owner</div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 italic">"I had no idea my robots.txt was blocking ChatGPT! Fixed it in 5 minutes and now people actually find my store when they ask AI for product recommendations."</p>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <span className="text-green-600 font-semibold text-sm">DJ</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">David J.</div>
-                      <div className="text-xs text-gray-500">Tech Blogger</div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 italic">"This tool showed me exactly what schema markup I was missing. My articles started appearing in Claude responses within a week!"</p>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                      <span className="text-purple-600 font-semibold text-sm">MK</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">Maria K.</div>
-                      <div className="text-xs text-gray-500">Digital Marketer</div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 italic">"Finally, a free tool that actually helps with AI optimization! The recommendations were spot-on and easy to implement."</p>
                 </div>
               </div>
             </section>

@@ -14,6 +14,8 @@ import Head from "next/head"
 
 export interface AnalysisResult {
   url: string
+  type?: string
+  title?: string
   overallScore: number
   categories: {
     crawlability: {
@@ -113,6 +115,9 @@ export interface AnalysisResult {
       impact: "high" | "medium" | "low"
     }>
   }
+  summary?: {
+    insights: string[]
+  }
   timestamp: string
 }
 
@@ -201,6 +206,31 @@ export default function Home() {
       
       // Track analysis completion
       trackAnalysisComplete(url, transformedResult.overallScore, false);
+      
+      // Save single-site results to database for sharing
+      const singleSiteResult = {
+        url: transformedResult.url,
+        type: transformedResult.type || 'homepage',
+        title: transformedResult.title,
+        overallScore: transformedResult.overallScore,
+        categories: {
+          aiAccess: transformedResult.categories.crawlability?.score || 0,
+          contentStructure: transformedResult.categories.contentStructure?.score || 0,
+          technicalInfra: transformedResult.categories.technicalPerformance?.score || 0,
+          structuredData: transformedResult.categories.structuredData?.score || 0
+        },
+        insights: transformedResult.summary?.insights || [],
+        recommendations: [
+          ...(transformedResult.recommendations?.quickWins || []),
+          ...(transformedResult.recommendations?.longTerm || [])
+        ].map(rec => ({
+          title: rec.title,
+          impact: rec.impact,
+          effort: 'medium',
+          category: 'General'
+        }))
+      };
+      saveResultsToDatabase([singleSiteResult]);
     } catch (error) {
       console.error('Single site analysis error:', error);
       setIsAnalyzing(false);
@@ -366,14 +396,14 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Free AI SEO Tool – Check Your Website's AI Visibility</title>
+        <title>Free AI Visibility Tool – Check Your Website's AI Visibility</title>
         <meta name="description" content="Test if ChatGPT, Claude & Perplexity can find your website. Get free robots.txt analysis, schema markup validation, and instant AI optimization recommendations." />
-        <meta property="og:title" content="Free AI SEO Tool – Check Your Website's AI Visibility" />
+        <meta property="og:title" content="Free AI Visibility Tool – Check Your Website's AI Visibility" />
         <meta property="og:description" content="Test if ChatGPT, Claude & Perplexity can find your website. Get free robots.txt analysis, schema markup validation, and instant AI optimization recommendations." />
         <meta property="og:image" content="https://amivisibleonai.vercel.app/og-image.png" />
         <meta property="og:url" content="https://amivisibleonai.vercel.app/" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Free AI SEO Tool – Check Your Website's AI Visibility" />
+        <meta name="twitter:title" content="Free AI Visibility Tool – Check Your Website's AI Visibility" />
         <meta name="twitter:description" content="Test if ChatGPT, Claude & Perplexity can find your website. Get free robots.txt analysis, schema markup validation, and instant AI optimization recommendations." />
         <meta name="twitter:image" content="https://amivisibleonai.vercel.app/og-image.png" />
       </Head>
@@ -385,12 +415,12 @@ export default function Home() {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "SoftwareApplication",
-              "name": "Am I Visible on AI - Free AI SEO Tool",
+              "name": "Am I Visible on AI - Free AI Visibility Tool",
               "alternateName": "AI Visibility Checker",
-              "description": "Free AI SEO tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI crawlers can access your website. Get instant schema markup analysis and AI optimization recommendations.",
+              "description": "Free AI visibility tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI crawlers can access your website. Get instant schema markup analysis and AI optimization recommendations.",
               "url": "https://amivisibleonai.vercel.app",
               "applicationCategory": "SEOApplication",
-              "applicationSubCategory": "AI SEO Tool",
+              "applicationSubCategory": "AI Visibility Tool",
               "operatingSystem": "Web Browser",
               "softwareVersion": "1.0",
               "releaseNotes": "Comprehensive AI visibility analysis with robots.txt checking, schema validation, and multi-site comparison",
@@ -407,7 +437,7 @@ export default function Home() {
                 "url": "https://amivisibleonai.vercel.app"
               },
               "featureList": [
-                "Free AI SEO analysis",
+                "Free AI visibility analysis",
                 "Robots.txt checker for AI crawlers",
                 "Schema markup validation",
                 "ChatGPT visibility testing",
@@ -418,7 +448,7 @@ export default function Home() {
                 "Instant optimization recommendations",
                 "AI crawler access permissions"
               ],
-              "keywords": "AI SEO tool, robots.txt checker, AI visibility, ChatGPT SEO, Claude search, schema markup checker",
+              "keywords": "AI visibility tool, robots.txt checker, AI visibility, ChatGPT optimization, Claude search, schema markup checker",
               "screenshot": "https://amivisibleonai.vercel.app/screenshot.png",
               "aggregateRating": {
                 "@type": "AggregateRating",
@@ -560,7 +590,7 @@ export default function Home() {
           {analysisResult && (
             <div id="analysis-results" className="border-t border-gray-200">
               <ScrollToResults shouldScroll={!!analysisResult} />
-              <ModernResultsEnhanced result={analysisResult} onReset={handleReset} />
+              <ModernResultsEnhanced result={analysisResult} onReset={handleReset} shareUrl={shareUrl || undefined} />
             </div>
           )}
 

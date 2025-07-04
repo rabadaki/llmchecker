@@ -64,14 +64,14 @@ export default function SharedResultsPage() {
     return (
       <>
         <Head>
-          <title>AI Visibility Results – AI SEO Checker</title>
+          <title>AI Visibility Results – AI Visibility Checker</title>
           <meta name="description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
-          <meta property="og:title" content="AI Visibility Results – AI SEO Checker" />
+          <meta property="og:title" content="AI Visibility Results – AI Visibility Checker" />
           <meta property="og:description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
           <meta property="og:image" content="https://amivisibleonai.vercel.app/og-image.png" />
           <meta property="og:url" content={`https://amivisibleonai.vercel.app/results/${id}`} />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="AI Visibility Results – AI SEO Checker" />
+          <meta name="twitter:title" content="AI Visibility Results – AI Visibility Checker" />
           <meta name="twitter:description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
           <meta name="twitter:image" content="https://amivisibleonai.vercel.app/og-image.png" />
         </Head>
@@ -92,14 +92,14 @@ export default function SharedResultsPage() {
     return (
       <>
         <Head>
-          <title>AI Visibility Results – AI SEO Checker</title>
+          <title>AI Visibility Results – AI Visibility Checker</title>
           <meta name="description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
-          <meta property="og:title" content="AI Visibility Results – AI SEO Checker" />
+          <meta property="og:title" content="AI Visibility Results – AI Visibility Checker" />
           <meta property="og:description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
           <meta property="og:image" content="https://amivisibleonai.vercel.app/og-image.png" />
           <meta property="og:url" content={`https://amivisibleonai.vercel.app/results/${id}`} />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="AI Visibility Results – AI SEO Checker" />
+          <meta name="twitter:title" content="AI Visibility Results – AI Visibility Checker" />
           <meta name="twitter:description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
           <meta name="twitter:image" content="https://amivisibleonai.vercel.app/og-image.png" />
         </Head>
@@ -146,14 +146,14 @@ export default function SharedResultsPage() {
   return (
     <>
       <Head>
-        <title>AI Visibility Results – AI SEO Checker</title>
+        <title>AI Visibility Results – AI Visibility Checker</title>
         <meta name="description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
-        <meta property="og:title" content="AI Visibility Results – AI SEO Checker" />
+        <meta property="og:title" content="AI Visibility Results – AI Visibility Checker" />
         <meta property="og:description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
         <meta property="og:image" content="https://amivisibleonai.vercel.app/og-image.png" />
         <meta property="og:url" content={`https://amivisibleonai.vercel.app/results/${id}`} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="AI Visibility Results – AI SEO Checker" />
+        <meta name="twitter:title" content="AI Visibility Results – AI Visibility Checker" />
         <meta name="twitter:description" content="See your website's AI visibility results. Check if ChatGPT, Claude, and Perplexity can find your site. Get instant optimization tips." />
         <meta name="twitter:image" content="https://amivisibleonai.vercel.app/og-image.png" />
       </Head>

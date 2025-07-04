@@ -292,7 +292,7 @@ User-agent: *
 Allow: /
 
 # Contact for AI training questions
-Contact: admin@yoursite.com`,
+Contact: amivisibleonai@pm.me`,
       estimatedTime: '10 minutes'
     }
   },

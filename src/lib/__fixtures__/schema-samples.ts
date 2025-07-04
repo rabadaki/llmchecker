@@ -56,7 +56,7 @@ export const SCHEMA_SAMPLES = {
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Complete Guide to AI SEO",
+      "headline": "Complete Guide to AI Visibility",
   "author": {
     "@type": "Person",
     "name": "John Doe"

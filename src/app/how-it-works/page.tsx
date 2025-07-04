@@ -6,7 +6,7 @@ import { CheckCircle, Bot, Search, Shield, Code, Globe, Zap, ArrowRight, AlertTr
 export const metadata: Metadata = {
   title: "How It Works - AI Visibility Checker | Am I Visible on AI",
   description: "Learn exactly how our AI visibility checker works. We analyze robots.txt, structured data, and content accessibility for ChatGPT, Claude, and Perplexity bots.",
-  keywords: "how to check AI visibility, AI crawler detection, robots.txt checker, structured data analyzer, AI SEO tool",
+      keywords: "how to check AI visibility, AI crawler detection, robots.txt checker, structured data analyzer, AI visibility tool",
   openGraph: {
     title: "How Our AI Visibility Checker Works",
     description: "Deep dive into the technical process of checking if your site is visible to ChatGPT, Claude, and Perplexity",
@@ -345,7 +345,7 @@ Final Score: 87.5/100`,
       {/* Add at the bottom of the page, before closing tags */}
       <div className="mt-12 text-center text-gray-500 text-sm">
         <strong>Last updated:</strong> July 1, 2025<br />
-        <strong>Author:</strong> Alex Kim, AI SEO Specialist
+        <strong>Author:</strong> Alex Kim, AI Visibility Specialist
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: `{
         "@context": "https://schema.org",

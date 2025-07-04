@@ -4,8 +4,8 @@ import { postsMeta } from "./posts-meta";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Visibility Insights – Tips & News for Getting Found by AI",
-  description: "Read the latest on AI SEO, AI visibility, and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
+  title: "AI Visibility Blog | Am I Visible on AI",
+  description: "Read the latest on AI visibility and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
   alternates: {
     types: {
       "application/rss+xml": [
@@ -14,16 +14,16 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "AI Visibility Insights – Tips & News for Getting Found by AI",
-    description: "Read the latest on AI SEO, AI visibility, and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
+    title: "AI Visibility Blog",
+    description: "Read the latest on AI visibility and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
     images: ["https://amivisibleonai.vercel.app/og-image.png"],
     url: "https://amivisibleonai.vercel.app/blog",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Visibility Insights – Tips & News for Getting Found by AI",
-    description: "Read the latest on AI SEO, AI visibility, and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
+    title: "AI Visibility Blog",
+    description: "Read the latest on AI visibility and how to get your website discovered by ChatGPT, Claude, and Perplexity.",
     images: ["https://amivisibleonai.vercel.app/og-image.png"],
   },
 };
