@@ -17,23 +17,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://amivisibleonai.com'),
-  title: "Free AI Visibility Tool - Check Your Website's AI Visibility | Am I Visible on AI",
-  description: "Free AI visibility tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI can find your website. Get instant schema markup analysis & optimization tips. 100% free.",
-  keywords: "AI visibility tool, free AI visibility, robots.txt checker, AI visibility, ChatGPT optimization, Claude search, Perplexity optimization, AI crawler analysis, schema markup checker, AI search optimization, LLM visibility, free SEO tool",
+  title: "Am I Visible on AI? Free Tool to Check Your AI Visibility | Test AI Crawlers",
+  description: "Wondering 'am I visible on AI?' Find out instantly. Free tool analyzes if ChatGPT, Claude & Perplexity can access your website. Get your AI visibility score and optimization tips.",
+  keywords: "am i visible on ai, AI visibility checker, am I visible to AI, AI visibility tool, free AI visibility, robots.txt checker, ChatGPT optimization, Claude search, Perplexity optimization, AI crawler analysis, schema markup checker, AI search optimization, LLM visibility, free SEO tool",
   authors: [{ name: "Am I Visible on AI" }],
   creator: "Am I Visible on AI",
   publisher: "Am I Visible on AI",
   openGraph: {
-    title: "Free AI Visibility Tool - Check Your Website's AI Visibility",
-    description: "Free robots.txt checker & AI visibility analysis for ChatGPT, Claude & Perplexity. Test if AI crawlers can access your website. Get instant optimization recommendations.",
+    title: "Am I Visible on AI? Free Tool to Check Your AI Visibility",
+    description: "Wondering 'am I visible on AI?' Find out instantly. Free tool analyzes if ChatGPT, Claude & Perplexity can access your website with detailed optimization tips.",
     url: "https://amivisibleonai.com",
     siteName: "Am I Visible on AI",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free AI Visibility Tool - Check Your AI Visibility",
-    description: "Free AI visibility checker. Test if ChatGPT, Claude & Perplexity can find your website. Instant robots.txt analysis & optimization tips.",
+    title: "Am I Visible on AI? Free AI Visibility Checker",
+    description: "Wondering 'am I visible on AI?' Find out instantly. Free analysis of your ChatGPT, Claude & Perplexity visibility.",
   },
   robots: {
     index: true,

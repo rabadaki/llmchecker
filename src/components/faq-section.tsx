@@ -5,7 +5,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
 
 const faqs = [
   {
-    question: "How can I check if my website is visible to ChatGPT?",
+    question: "Am I visible on AI? How can I check?",
     answer: "That's exactly what our tool does! We analyze your website to see if AI systems like ChatGPT can access and understand your content. We check your robots.txt file for AI crawler permissions, validate your structured data markup, and test how well your content is organized. You'll get a score and specific recommendations to improve how ChatGPT, Claude, and other AI systems can find and reference your site."
   },
   {

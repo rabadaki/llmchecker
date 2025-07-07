@@ -11,6 +11,7 @@ import { ScrollToResults } from "@/components/scroll-to-results"
 import { FAQSection } from "@/components/faq-section"
 import { trackAnalysisStart, trackAnalysisComplete } from "@/lib/analytics"
 import Head from "next/head"
+import { SchemaMarkup } from "@/components/schema-markup"
 
 export interface AnalysisResult {
   url: string
@@ -416,8 +417,8 @@ export default function Home() {
               "@context": "https://schema.org",
               "@type": "SoftwareApplication",
               "name": "Am I Visible on AI - Free AI Visibility Tool",
-              "alternateName": "AI Visibility Checker",
-              "description": "Free AI visibility tool with robots.txt checker for ChatGPT, Claude & Perplexity. Test if AI crawlers can access your website. Get instant schema markup analysis and AI optimization recommendations.",
+              "alternateName": ["AI Visibility Checker", "Am I Visible on AI Tool", "AI Visibility Test"],
+              "description": "Wondering 'am I visible on AI?' Find out instantly. Free tool analyzes if ChatGPT, Claude & Perplexity can access your website. Get your AI visibility score with detailed optimization recommendations.",
               "url": "https://amivisibleonai.vercel.app",
               "applicationCategory": "SEOApplication",
               "applicationSubCategory": "AI Visibility Tool",

@@ -175,10 +175,10 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
       <div className="container mx-auto px-6 py-16">
         <header className="max-w-3xl mx-auto text-center">
           {/* Main heading */}
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Is Your Website Visible to ChatGPT?</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Am I Visible on AI?</h1>
 
           <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
-            Test if ChatGPT, Claude & Perplexity can find your website. Get instant analysis and actionable recommendations.
+            1.1 billion AI searches happen daily. Make sure ChatGPT, Claude & Perplexity can find and recommend your business.
           </p>
         </header>
 
@@ -194,7 +194,7 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
                   <div className="flex-1 relative">
                     <Input
                       type="text"
-                      placeholder="Enter your website URL"
+                      placeholder="Enter your website URL to check AI visibility"
                       value={url}
                       onChange={(e) => {
                         setUrl(e.target.value)
@@ -225,7 +225,7 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
                     ) : (
                       <>
                         <MagnifyingGlassIcon className="w-5 h-5 mr-2" />
-                        Check My Site
+                        Get My AI Visibility Score
                       </>
                     )}
                   </Button>
@@ -236,9 +236,16 @@ export function UnifiedSiteInput({ onAnalyze, isAnalyzing }: UnifiedSiteInputPro
               </div>
             </form>
 
+            {/* Social proof */}
+            {!discoveredSites.length && (
+              <div className="text-center mt-4 text-sm text-gray-600">
+                <p className="mb-4">✨ Join 10,000+ websites improving their AI visibility</p>
+              </div>
+            )}
+
             {/* Quick suggestions */}
             {!discoveredSites.length && (
-              <div>
+              <div className="text-center">
                 <p className="text-sm text-gray-500 mb-3">Try these examples:</p>
                 <div className="flex flex-wrap justify-center gap-2">
                   {suggestions.map((suggestion) => (
